@@ -5,12 +5,15 @@ import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 
 const index = () => {
-  // TODO: user clicks START; timer count to 10 mins; when timer is up, show modal
   const [seconds, setSeconds] = useState(0)
+  const [progressBarValue, setProgressBarValue] = useState(0)
   const [isTimerActive, setisTimerActive] = useState(false)
   const [showModal, setModalShow] = useState(false)
 
-  const secondsInTenMins = 3 - 1
+  const secondsInTenMins = 60 * 10
+
+  const calcProgressBarValue = () =>
+    Math.ceil((seconds / secondsInTenMins) * 100)
 
   const toggleTimer = () => {
     setisTimerActive(!isTimerActive)
@@ -35,6 +38,7 @@ const index = () => {
     if (isTimerActive) {
       interval = setInterval(() => {
         setSeconds((seconds) => seconds + 1)
+        setProgressBarValue(calcProgressBarValue())
         if (seconds >= secondsInTenMins) {
           toggleTimer()
           setModalShow(true)
@@ -44,7 +48,7 @@ const index = () => {
       clearInterval(interval)
     }
     return () => clearInterval(interval)
-  }, [isTimerActive, seconds])
+  }, [isTimerActive, seconds, progressBarValue, showModal])
 
   const pageTitle = "10 Minute time-tracker"
   const spacing = "mb-5"
@@ -79,7 +83,7 @@ const index = () => {
           </Container>
 
           <Container className={spacing}>
-            <ProgressBar now={seconds} />
+            <ProgressBar now={progressBarValue} />
             {/* <ProgressBar animated now={seconds} /> */}
           </Container>
 
