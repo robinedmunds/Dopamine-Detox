@@ -1,5 +1,12 @@
 import Head from "next/head"
-import { Container, Button, Modal, ProgressBar } from "react-bootstrap"
+import {
+  Container,
+  Button,
+  Modal,
+  ProgressBar,
+  Tabs,
+  Tab
+} from "react-bootstrap"
 import Layout from "../components/Layout"
 
 const Scratch = () => {
@@ -74,6 +81,23 @@ const Scratch = () => {
         </Container>
         <Container className={spacing}>
           <ProgressBar animated now={45} />
+        </Container>
+
+        <Container className={spacing}>
+          <Tabs
+            defaultActiveKey="profile"
+            id="uncontrolled-tab-example"
+            className="mb-3">
+            <Tab eventKey="home" title="Home">
+              {lorem}
+            </Tab>
+            <Tab eventKey="profile" title="Profile">
+              {lorem}
+            </Tab>
+            <Tab eventKey="contact" title="Contact" disabled>
+              {lorem}
+            </Tab>
+          </Tabs>
         </Container>
       </Layout>
     </>
