@@ -5,9 +5,12 @@ import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 
 const index = () => {
-  const [seconds, setSeconds] = useState(1)
+  // TODO: user clicks START; timer count to 10 mins; when timer is up, show modal
+  const [seconds, setSeconds] = useState(0)
   const [isTimerActive, setisTimerActive] = useState(false)
   const [showModal, setModalShow] = useState(false)
+
+  const secondsInTenMins = 3 - 1
 
   const toggleTimer = () => {
     setisTimerActive(!isTimerActive)
@@ -18,6 +21,13 @@ const index = () => {
     setisTimerActive(false)
   }
 
+  const buttonHandler = () => {
+    setModalShow(false)
+    resetTimer()
+    toggleTimer()
+    // TODO: store result
+  }
+
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
     let interval = null
@@ -25,6 +35,10 @@ const index = () => {
     if (isTimerActive) {
       interval = setInterval(() => {
         setSeconds((seconds) => seconds + 1)
+        if (seconds >= secondsInTenMins) {
+          toggleTimer()
+          setModalShow(true)
+        }
       }, 1000)
     } else if (!isTimerActive && seconds !== 0) {
       clearInterval(interval)
@@ -41,7 +55,7 @@ const index = () => {
         <title>{pageTitle}</title>
       </Head>
 
-      <TrackerModal show={showModal} setModalShow={setModalShow} />
+      <TrackerModal show={showModal} buttonHandler={buttonHandler} />
 
       <Layout>
         <Container className={spacing}>

@@ -22,14 +22,14 @@ const activities = {
   ]
 }
 
-const TrackerModal = ({ show, setModalShow }) => {
+const TrackerModal = ({ show, buttonHandler }) => {
   const generateButton = (idx, desc, pos) => (
     <Button
       key={idx}
       variant={pos ? "success" : "warning"}
       size="lg"
       className={"my-3"}
-      onClick={() => setModalShow(false)}>
+      onClick={() => buttonHandler()}>
       {desc}
     </Button>
   )
@@ -48,10 +48,9 @@ const TrackerModal = ({ show, setModalShow }) => {
   return (
     <Modal
       show={show}
-      onHide={() => setModalShow(false)}
       dialogClassName="modal-90w"
       aria-labelledby="example-custom-modal-styling-title">
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title id="example-custom-modal-styling-title">
           What have you been doing for the past 10 minutes?
         </Modal.Title>
