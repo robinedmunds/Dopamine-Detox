@@ -3,11 +3,11 @@ import { Container, Nav, Navbar } from "react-bootstrap"
 
 const pages = [
   { title: "Home", link: "/" },
-  { title: "Scratch", link: "scratch" }
+  { title: "Scratch", link: "/scratch" }
 ]
 
 const NavItems = pages.map((o) => (
-  <Link href={o.link} passHref>
+  <Link key={o.title} href={o.link} passHref>
     <Nav.Link href={o.link}>{o.title}</Nav.Link>
   </Link>
 ))
@@ -15,7 +15,7 @@ const NavItems = pages.map((o) => (
 const NavigationBar = () => (
   <Navbar bg="primary" variant="dark" className={"mb-4"}>
     <Container>
-      <Navbar.Brand href="/">Navbar</Navbar.Brand>
+      <Navbar.Brand href="/">Dopamine detox app prototype</Navbar.Brand>
       <Nav className="me-auto">{NavItems}</Nav>
     </Container>
   </Navbar>
