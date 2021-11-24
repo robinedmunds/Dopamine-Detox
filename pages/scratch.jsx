@@ -1,3 +1,4 @@
+import { useState } from "react"
 import Head from "next/head"
 import {
   Container,
@@ -10,6 +11,8 @@ import {
 import Layout from "../components/Layout"
 
 const Scratch = () => {
+  const [show, setShow] = useState(false)
+
   const spacing = "mb-5"
   const lorem =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -19,14 +22,28 @@ const Scratch = () => {
       <Head>
         <title>Scratch page</title>
       </Head>
-
+      <Modal
+        show={show}
+        onHide={() => setShow(false)}
+        dialogClassName="modal-90w"
+        aria-labelledby="example-custom-modal-styling-title">
+        <Modal.Header closeButton>
+          <Modal.Title id="example-custom-modal-styling-title">
+            Excepteur sint occaecat cupidatat non proident
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{lorem}</p>
+          <p>{lorem}</p>
+          <p>{lorem}</p>
+        </Modal.Body>
+      </Modal>{" "}
       <Layout>
         <Container className={spacing}>
           <h1 className={"mb-3"}>Scratch page</h1>
           <p>{lorem}</p>
           <p>{lorem}</p>
         </Container>
-
         <Container className={spacing}>
           <Button variant="primary">Primary</Button>{" "}
           <Button variant="secondary">Secondary</Button>{" "}
@@ -62,7 +79,6 @@ const Scratch = () => {
             </div>
           </Container>
         </Container>
-
         <Container>
           <Modal.Dialog>
             <Modal.Header closeButton>
@@ -82,7 +98,6 @@ const Scratch = () => {
         <Container className={spacing}>
           <ProgressBar animated now={45} />
         </Container>
-
         <Container className={spacing}>
           <Tabs
             defaultActiveKey="profile"
@@ -99,6 +114,9 @@ const Scratch = () => {
             </Tab>
           </Tabs>
         </Container>
+        <Button variant="primary" onClick={() => setShow(true)}>
+          Custom Width Modal
+        </Button>
       </Layout>
     </>
   )
