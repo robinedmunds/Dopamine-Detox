@@ -7,8 +7,9 @@ const pages = [
 ]
 
 const NavItems = pages.map((o) => (
-  // TODO:  fix none single-page app links
-  <Nav.Link href={o.link}>{o.title}</Nav.Link>
+  <Link href={o.link} passHref>
+    <Nav.Link href={o.link}>{o.title}</Nav.Link>
+  </Link>
 ))
 
 const NavigationBar = () => (
