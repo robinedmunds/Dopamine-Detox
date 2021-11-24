@@ -1,3 +1,4 @@
+import { useState } from "react"
 import Head from "next/head"
 import {
   Container,
@@ -10,6 +11,8 @@ import {
 import Layout from "../components/Layout"
 
 const index = () => {
+  const [show, setShow] = useState(false)
+
   const pageTitle = "10 Minute time-tracker"
   const spacing = "mb-5"
   const positives = [
@@ -49,7 +52,40 @@ const index = () => {
       <Head>
         <title>{pageTitle}</title>
       </Head>
-
+      <Modal
+        show={show}
+        onHide={() => setShow(false)}
+        dialogClassName="modal-90w"
+        aria-labelledby="example-custom-modal-styling-title">
+        <Modal.Header closeButton>
+          <Modal.Title id="example-custom-modal-styling-title">
+            What have you been doing for the past 10 minutes?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Tabs
+            defaultActiveKey="negatives"
+            id="uncontrolled-tab-example"
+            className="mb-3">
+            <Tab eventKey="negatives" title="negatives">
+              <Container
+                className={
+                  "d-flex flex-column justify-content-center align-items-center"
+                }>
+                {generateNegativeButtons}
+              </Container>
+            </Tab>
+            <Tab eventKey="positives" title="positives">
+              <Container
+                className={
+                  "d-flex flex-column justify-content-center align-items-center"
+                }>
+                {generatePositiveButtons}
+              </Container>
+            </Tab>
+          </Tabs>
+        </Modal.Body>
+      </Modal>
       <Layout>
         <Container className={spacing}>
           <h1 className={"mb-3"}>{pageTitle}</h1>
@@ -67,39 +103,9 @@ const index = () => {
             <ProgressBar animated now={45} />
           </Container>
 
-          <Container>
-            <Modal.Dialog className={"mw-100"}>
-              <Modal.Header closeButton>
-                <Modal.Title>
-                  What have you been doing for the past 10 minutes?
-                </Modal.Title>
-              </Modal.Header>
-
-              <Modal.Body>
-                <Tabs
-                  defaultActiveKey="negatives"
-                  id="uncontrolled-tab-example"
-                  className="mb-3">
-                  <Tab eventKey="negatives" title="negatives">
-                    <Container
-                      className={
-                        "d-flex flex-column justify-content-center align-items-center"
-                      }>
-                      {generateNegativeButtons}
-                    </Container>
-                  </Tab>
-                  <Tab eventKey="positives" title="positives">
-                    <Container
-                      className={
-                        "d-flex flex-column justify-content-center align-items-center"
-                      }>
-                      {generatePositiveButtons}
-                    </Container>
-                  </Tab>
-                </Tabs>
-              </Modal.Body>
-            </Modal.Dialog>
-          </Container>
+          <Button variant="primary" onClick={() => setShow(true)}>
+            Custom Width Modal
+          </Button>
         </Container>
       </Layout>
     </>
