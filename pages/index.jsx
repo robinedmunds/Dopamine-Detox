@@ -1,18 +1,12 @@
 import { useState } from "react"
 import Head from "next/head"
-import {
-  Container,
-  Button,
-  Modal,
-  ProgressBar,
-  Tabs,
-  Tab
-} from "react-bootstrap"
+import { Container, Button, ProgressBar } from "react-bootstrap"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 
 const index = () => {
-  const [show, setModalShow] = useState(false)
+  const [showModal, setModalShow] = useState(false)
+  const [progressValue, setProgress] = useState(85)
 
   const pageTitle = "10 Minute time-tracker"
   const spacing = "mb-5"
@@ -23,7 +17,7 @@ const index = () => {
         <title>{pageTitle}</title>
       </Head>
 
-      <TrackerModal show={show} setModalShow={setModalShow} />
+      <TrackerModal show={showModal} setModalShow={setModalShow} />
 
       <Layout>
         <Container className={spacing}>
@@ -39,7 +33,7 @@ const index = () => {
           </Container>
 
           <Container className={spacing}>
-            <ProgressBar animated now={45} />
+            <ProgressBar animated now={progressValue} />
           </Container>
 
           <Button variant="primary" onClick={() => setModalShow(true)}>
