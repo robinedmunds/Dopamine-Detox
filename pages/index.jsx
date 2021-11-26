@@ -7,21 +7,21 @@ import TrackerModal from "../components/tracker/Modal"
 const index = () => {
   const [seconds, setSeconds] = useState(0)
   const [progressBarValue, setProgressBarValue] = useState(0)
-  const [isTimerActive, setisTimerActive] = useState(false)
+  const [isTimerActive, setIsTimerActive] = useState(false)
   const [showModal, setModalShow] = useState(false)
 
-  const secondsInTenMins = 60 * 10
+  const secondsInTenMins = 4
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins) * 100)
 
   const toggleTimer = () => {
-    setisTimerActive(!isTimerActive)
+    setIsTimerActive(!isTimerActive)
   }
 
   const resetTimer = () => {
     setSeconds(0)
-    setisTimerActive(false)
+    setIsTimerActive(false)
   }
 
   const buttonHandler = () => {
@@ -53,6 +53,35 @@ const index = () => {
   const pageTitle = "10 Minute time-tracker"
   const spacing = "mb-5"
 
+  const renderStartStopBtn = () => {
+    if (!isTimerActive) {
+      return (
+        <Container className={"d-flex justify-content-around"}>
+          <Button
+            id="start-stop-button"
+            variant="success"
+            size="lg"
+            className={"my-5"}
+            onClick={() => toggleTimer()}>
+            Start time tracker
+          </Button>
+        </Container>
+      )
+    }
+    return (
+      <Container className={"d-flex justify-content-around"}>
+        <Button
+          id="start-stop-button"
+          variant="danger"
+          size="lg"
+          className={"my-5"}
+          onClick={() => toggleTimer()}>
+          Stop time tracker
+        </Button>
+      </Container>
+    )
+  }
+
   return (
     <>
       <Head>
@@ -64,30 +93,16 @@ const index = () => {
       <Layout>
         <Container className={spacing}>
           <h1 className={"mb-3"}>{pageTitle}</h1>
-
-          <Container className={"d-flex justify-content-around"}>
-            <Button
-              variant="success"
-              size="lg"
-              className={"my-5"}
-              onClick={() => setisTimerActive(true)}>
-              Start time tracker
-            </Button>
-            <Button
-              variant="danger"
-              size="lg"
-              className={"my-5"}
-              onClick={() => setisTimerActive(false)}>
-              Stop time tracker
-            </Button>
-          </Container>
-
+          {renderStartStopBtn()}
           <Container className={spacing}>
             <ProgressBar now={progressBarValue} />
             {/* <ProgressBar animated now={seconds} /> */}
           </Container>
 
-          <Button variant="primary" onClick={() => setModalShow(true)}>
+          <Button
+            className="invisible"
+            variant="primary"
+            onClick={() => setModalShow(true)}>
             Open user prompt modal
           </Button>
         </Container>
