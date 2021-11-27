@@ -3,6 +3,7 @@ import Head from "next/head"
 import { Container, Button, ProgressBar } from "react-bootstrap"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
+import mockAPI from "../api/index"
 
 const index = () => {
   const [seconds, setSeconds] = useState(0)
@@ -88,7 +89,11 @@ const index = () => {
         <title>{pageTitle}</title>
       </Head>
 
-      <TrackerModal show={showModal} buttonHandler={buttonHandler} />
+      <TrackerModal
+        show={showModal}
+        buttonHandler={buttonHandler}
+        mockAPI={mockAPI}
+      />
 
       <Layout>
         <Container className={spacing}>

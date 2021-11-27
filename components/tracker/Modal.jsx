@@ -1,28 +1,6 @@
 import { Container, Button, Modal, Tabs, Tab } from "react-bootstrap"
 
-const activities = {
-  pos: [
-    "exercising",
-    "socialising",
-    "reading a book",
-    "cooking",
-    "eating a meal",
-    "project work",
-    "going for a walk"
-  ],
-  neg: [
-    "browsing social media",
-    "watching a random youtube video",
-    "playing a game",
-    "watching tv",
-    "listening to music",
-    "binging on the news",
-    "binge eating",
-    "substance abuse"
-  ]
-}
-
-const TrackerModal = ({ show, buttonHandler }) => {
+const TrackerModal = ({ show, buttonHandler, mockAPI }) => {
   const generateButton = (idx, desc, pos) => (
     <Button
       key={idx}
@@ -35,14 +13,18 @@ const TrackerModal = ({ show, buttonHandler }) => {
   )
 
   const generatePosButtons = () => {
-    const positive = true
-    const posArr = activities.pos
-    return posArr.map((i, idx) => generateButton(idx, i, positive))
+    const arr = []
+    for (const [key, value] of Object.entries(mockAPI.activities.positives)) {
+      arr.push(generateButton(key, value, true))
+    }
+    return arr
   }
   const generateNegButtons = () => {
-    const positive = false
-    const negArr = activities.neg
-    return negArr.map((i, idx) => generateButton(idx, i, positive))
+    const arr = []
+    for (const [key, value] of Object.entries(mockAPI.activities.negatives)) {
+      arr.push(generateButton(key, value, false))
+    }
+    return arr
   }
 
   return (
