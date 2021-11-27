@@ -27,7 +27,7 @@ const index = () => {
   const activityBtnHandler = (activityId) => {
     setModalShow(false)
     toggleTimer()
-    logActivity([...activityLog, activityId])
+    logActivity([...activityLog, activities[activityId]])
 
     const example = {
       id: 0,
@@ -118,7 +118,7 @@ const index = () => {
             onClick={() => setModalShow(true)}>
             Open user prompt modal
           </Button>
-          <LogTable />
+          <LogTable activityLog={activityLog} />
         </Container>
       </Layout>
     </>

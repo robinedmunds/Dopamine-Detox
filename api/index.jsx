@@ -19,16 +19,17 @@ const generateObj = () => {
     "substance abuse"
   ]
 
-  let activities = {}
   const positives = Object.fromEntries(
-    pos.map((desc, idx) => [idx, { desc, positive: true }])
+    pos.map((desc, idx) => [idx, { id: idx, desc, positive: true }])
   )
   const negatives = Object.fromEntries(
-    neg.map((desc, idx) => [idx + 100, { desc, positive: false }])
+    neg.map((desc, idx) => [
+      idx + 100,
+      { id: idx + 100, desc, positive: false }
+    ])
   )
 
-  activities = {
-    ...activities,
+  const activities = {
     ...positives,
     ...negatives
   }
