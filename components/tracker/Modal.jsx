@@ -4,6 +4,7 @@ const TrackerModal = ({ show, activityBtnHandler, activities }) => {
   const generateBtn = (id, desc, isPositive) => (
     <Button
       key={id}
+      data-activity-id={id}
       variant={isPositive ? "success" : "warning"}
       size="lg"
       className={"my-3"}
@@ -14,12 +15,9 @@ const TrackerModal = ({ show, activityBtnHandler, activities }) => {
 
   const generateBtns = (isPositive) => {
     const arr = []
-    const act = isPositive
-      ? activities.activities.positives
-      : activities.activities.negatives
-
-    for (const [key, value] of Object.entries(act)) {
-      arr.push(generateBtn(key, value, isPositive))
+    for (const [key, obj] of Object.entries(activities)) {
+      if (isPositive === obj.positive)
+        arr.push(generateBtn(key, obj.desc, obj.positive))
     }
     return arr
   }

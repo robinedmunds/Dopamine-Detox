@@ -4,6 +4,7 @@ import { Container, Button, ProgressBar } from "react-bootstrap"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import mockAPI from "../api/index"
+import LogTable from "../components/tracker/LogTable"
 
 const index = () => {
   const [seconds, setSeconds] = useState(0)
@@ -27,6 +28,12 @@ const index = () => {
     setModalShow(false)
     toggleTimer()
     logActivity([...activityLog, activityId])
+
+    const example = {
+      id: 0,
+      desc: "Read book",
+      positive: false
+    }
   }
 
   useEffect(() => {
@@ -111,6 +118,7 @@ const index = () => {
             onClick={() => setModalShow(true)}>
             Open user prompt modal
           </Button>
+          <LogTable />
         </Container>
       </Layout>
     </>
