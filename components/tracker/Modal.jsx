@@ -1,32 +1,25 @@
 import { Container, Button, Modal, Tabs, Tab } from "react-bootstrap"
 
-const TrackerModal = ({ show, buttonHandler, activities }) => {
-  const generateButton = (id, desc, pos) => (
+const TrackerModal = ({ show, activityBtnHandler, activities }) => {
+  const generateBtn = (id, desc, isPositive) => (
     <Button
       key={id}
-      variant={pos ? "success" : "warning"}
+      variant={isPositive ? "success" : "warning"}
       size="lg"
       className={"my-3"}
-      onClick={() => buttonHandler(id)}>
+      onClick={() => activityBtnHandler(id)}>
       {desc}
     </Button>
   )
 
-  const generatePosButtons = () => {
+  const generateBtns = (isPositive) => {
     const arr = []
-    for (const [key, value] of Object.entries(
-      activities.activities.positives
-    )) {
-      arr.push(generateButton(key, value, true))
-    }
-    return arr
-  }
-  const generateNegButtons = () => {
-    const arr = []
-    for (const [key, value] of Object.entries(
-      activities.activities.negatives
-    )) {
-      arr.push(generateButton(key, value, false))
+    const act = isPositive
+      ? activities.activities.positives
+      : activities.activities.negatives
+
+    for (const [key, value] of Object.entries(act)) {
+      arr.push(generateBtn(key, value, isPositive))
     }
     return arr
   }
@@ -51,7 +44,7 @@ const TrackerModal = ({ show, buttonHandler, activities }) => {
               className={
                 "d-flex flex-column justify-content-center align-items-center"
               }>
-              {generateNegButtons()}
+              {generateBtns(false)}
             </Container>
           </Tab>
           <Tab eventKey="positives" title="positives">
@@ -59,7 +52,7 @@ const TrackerModal = ({ show, buttonHandler, activities }) => {
               className={
                 "d-flex flex-column justify-content-center align-items-center"
               }>
-              {generatePosButtons()}
+              {generateBtns(true)}
             </Container>
           </Tab>
         </Tabs>

@@ -20,16 +20,11 @@ const index = () => {
 
   const toggleTimer = () => {
     setIsTimerActive(!isTimerActive)
-  }
-
-  const resetTimer = () => {
     setSeconds(0)
-    setIsTimerActive(false)
   }
 
-  const buttonHandler = (activityId) => {
+  const activityBtnHandler = (activityId) => {
     setModalShow(false)
-    resetTimer()
     toggleTimer()
     logActivity([...activityLog, activityId])
   }
@@ -97,7 +92,7 @@ const index = () => {
 
       <TrackerModal
         show={showModal}
-        buttonHandler={buttonHandler}
+        activityBtnHandler={activityBtnHandler}
         activities={activities}
       />
 
