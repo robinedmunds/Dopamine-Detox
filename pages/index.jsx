@@ -10,6 +10,7 @@ const index = () => {
   const [progressBarValue, setProgressBarValue] = useState(0)
   const [isTimerActive, setIsTimerActive] = useState(false)
   const [showModal, setModalShow] = useState(false)
+  const [activities, setActivities] = useState(mockAPI)
 
   const secondsInTenMins = 4
 
@@ -92,7 +93,7 @@ const index = () => {
       <TrackerModal
         show={showModal}
         buttonHandler={buttonHandler}
-        mockAPI={mockAPI}
+        activities={activities}
       />
 
       <Layout>
