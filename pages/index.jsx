@@ -11,8 +11,9 @@ const index = () => {
   const [isTimerActive, setIsTimerActive] = useState(false)
   const [showModal, setModalShow] = useState(false)
   const [activities, setActivities] = useState(mockAPI)
+  const [activityLog, logActivity] = useState([])
 
-  const secondsInTenMins = 4
+  const secondsInTenMins = 2
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins) * 100)
@@ -26,11 +27,11 @@ const index = () => {
     setIsTimerActive(false)
   }
 
-  const buttonHandler = () => {
+  const buttonHandler = (activityId) => {
     setModalShow(false)
     resetTimer()
     toggleTimer()
-    // TODO: store result
+    logActivity([...activityLog, activityId])
   }
 
   useEffect(() => {
@@ -50,7 +51,11 @@ const index = () => {
       clearInterval(interval)
     }
     return () => clearInterval(interval)
-  }, [isTimerActive, seconds, progressBarValue, showModal])
+  }, [isTimerActive, seconds])
+
+  useEffect(() => {
+    console.log(`activityLog:  ${activityLog}`)
+  }, [activityLog])
 
   const pageTitle = "10 Minute time-tracker"
   const spacing = "mb-5"

@@ -1,13 +1,13 @@
 import { Container, Button, Modal, Tabs, Tab } from "react-bootstrap"
 
 const TrackerModal = ({ show, buttonHandler, activities }) => {
-  const generateButton = (idx, desc, pos) => (
+  const generateButton = (id, desc, pos) => (
     <Button
-      key={idx}
+      key={id}
       variant={pos ? "success" : "warning"}
       size="lg"
       className={"my-3"}
-      onClick={() => buttonHandler()}>
+      onClick={() => buttonHandler(id)}>
       {desc}
     </Button>
   )
