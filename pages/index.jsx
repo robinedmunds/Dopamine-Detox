@@ -42,16 +42,16 @@ const index = () => {
 
     if (isTimerActive) {
       interval = setInterval(() => {
+        logger("timer useEffect")
         setSeconds((seconds) => seconds + 1)
         setProgressBarValue(calcProgressBarValue())
+
         if (seconds >= secondsInTenMins.current) {
           audibleBell.current.play()
           toggleTimer()
           setModalShow(true)
         }
       }, 1000)
-    } else if (!isTimerActive && seconds !== 0) {
-      clearInterval(interval)
     }
     return () => clearInterval(interval)
   }, [isTimerActive, seconds])
