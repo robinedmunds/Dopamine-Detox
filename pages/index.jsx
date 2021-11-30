@@ -65,22 +65,8 @@ const index = () => {
     console.log(`activityLog:  ${activityLog}`)
   }, [activityLog])
 
-  const renderStartStopBtn = () => {
-    if (!isTimerActive) {
-      return (
-        <Container className={"d-flex justify-content-around"}>
-          <Button
-            id="start-stop-button"
-            variant="success"
-            size="lg"
-            className={"my-5"}
-            onClick={() => toggleTimer()}>
-            Start time tracker
-          </Button>
-        </Container>
-      )
-    }
-    return (
+  const renderStartStopBtn = () =>
+    isTimerActive ? (
       <Container className={"d-flex justify-content-around"}>
         <Button
           id="start-stop-button"
@@ -91,8 +77,18 @@ const index = () => {
           Stop time tracker
         </Button>
       </Container>
+    ) : (
+      <Container className={"d-flex justify-content-around"}>
+        <Button
+          id="start-stop-button"
+          variant="success"
+          size="lg"
+          className={"my-5"}
+          onClick={() => toggleTimer()}>
+          Start time tracker
+        </Button>
+      </Container>
     )
-  }
 
   return (
     <>
