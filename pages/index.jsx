@@ -16,6 +16,7 @@ const index = () => {
   const [activities, setActivities] = useState(null)
   const [activityLog, setActivityLog] = useState([])
   const secondsInTenMins = useRef(2)
+  const promptTime = useRef(null)
   const audibleBell = useRef(null)
 
   const calcProgressBarValue = () =>
@@ -29,7 +30,14 @@ const index = () => {
   const activityBtnHandler = (activityId) => {
     setModalShow(false)
     toggleTimer()
-    setActivityLog((activityLog) => [...activityLog, activities[activityId]])
+    setActivityLog((prevActivityLog) => [
+      ...prevActivityLog,
+      {
+        ...activities[activityId],
+        promptTime: promptTime.current,
+        reportTime: new Date()
+      }
+    ])
   }
 
   useEffect(() => setActivities(mockAPI), [])
@@ -47,6 +55,7 @@ const index = () => {
           audibleBell.current.play()
           toggleTimer()
           setModalShow(true)
+          promptTime.current = new Date()
         }
       }, 1000)
     }
