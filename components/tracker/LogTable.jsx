@@ -3,7 +3,7 @@ import { Table } from "react-bootstrap"
 
 const LogTable = ({ activityLog }) => {
   const generateRow = (idx, { id, desc, positive }) => (
-    <tr className={positive ? "bg-success" : "bg-warning"}>
+    <tr key={idx + 1} className={positive ? "bg-success" : "bg-warning"}>
       <td>{idx + 1}</td>
       <td>{id}</td>
       <td>{desc}</td>
