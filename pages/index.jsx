@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react"
 import Head from "next/head"
-import { Container, Button, ProgressBar } from "react-bootstrap"
+import { Container, Button } from "react-bootstrap"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
+import ProgressBar from "../components/tracker/ProgressBar"
 import mockAPI from "../api/index"
 import logger from "../helpers/logger"
 
@@ -15,8 +16,6 @@ const index = () => {
   const [activities, setActivities] = useState(null)
   const [activityLog, setActivityLog] = useState([])
   const [secondsInTenMins, setSecondsInTenMins] = useState(2)
-
-  const pageTitle = "10 Minute time-tracker"
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins) * 100)
@@ -45,6 +44,7 @@ const index = () => {
         setSeconds((seconds) => seconds + 1)
         setProgressBarValue(calcProgressBarValue())
         if (seconds >= secondsInTenMins) {
+          document.querySelector("audio").play()
           toggleTimer()
           setModalShow(true)
         }
@@ -85,6 +85,7 @@ const index = () => {
       </Container>
     )
 
+  const pageTitle = "10 Minute time-tracker"
   return (
     <>
       <Head>
@@ -102,8 +103,7 @@ const index = () => {
           <h1 className={"mb-3"}>{pageTitle}</h1>
           {renderStartStopBtn()}
           <Container className={"mb-5"}>
-            <ProgressBar now={progressBarValue} />
-            {/* <ProgressBar animated now={seconds} /> */}
+            <ProgressBar percentage={progressBarValue} />
           </Container>
 
           <Button
@@ -115,6 +115,9 @@ const index = () => {
           <LogTable activityLog={activityLog} />
         </Container>
       </Layout>
+      <audio preload="auto">
+        <source src="ring.ogg" type="audio/ogg" />
+      </audio>
     </>
   )
 }
