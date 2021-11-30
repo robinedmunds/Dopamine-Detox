@@ -12,11 +12,9 @@ const LogTable = ({ activityLog }) => {
 
   const generateRows = () => {
     const rows = []
-
     activityLog.forEach((obj, idx) => {
       rows.push(generateRow(idx, obj))
     })
-
     return rows
   }
 

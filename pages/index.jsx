@@ -3,8 +3,8 @@ import Head from "next/head"
 import { Container, Button, ProgressBar } from "react-bootstrap"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
-import mockAPI from "../api/index"
 import LogTable from "../components/tracker/LogTable"
+import mockAPI from "../api/index"
 
 const index = () => {
   const [seconds, setSeconds] = useState(0)
