@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
 import Layout from "../components/Layout"
@@ -15,10 +15,10 @@ const index = () => {
   const [showModal, setModalShow] = useState(false)
   const [activities, setActivities] = useState(null)
   const [activityLog, setActivityLog] = useState([])
-  const [secondsInTenMins, setSecondsInTenMins] = useState(2)
+  const secondsInTenMins = useRef(2)
 
   const calcProgressBarValue = () =>
-    Math.ceil((seconds / secondsInTenMins) * 100)
+    Math.ceil((seconds / secondsInTenMins.current) * 100)
 
   const toggleTimer = () => {
     setIsTimerActive(!isTimerActive)
@@ -43,7 +43,7 @@ const index = () => {
       interval = setInterval(() => {
         setSeconds((seconds) => seconds + 1)
         setProgressBarValue(calcProgressBarValue())
-        if (seconds >= secondsInTenMins) {
+        if (seconds >= secondsInTenMins.current) {
           document.querySelector("audio").play()
           toggleTimer()
           setModalShow(true)
