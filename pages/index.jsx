@@ -13,10 +13,10 @@ const index = () => {
   const [isTimerActive, setIsTimerActive] = useState(false)
   const [showModal, setModalShow] = useState(false)
   const [activities, setActivities] = useState(null)
-  const [activityLog, logActivity] = useState([])
+  const [activityLog, setActivityLog] = useState([])
+  const [secondsInTenMins, setSecondsInTenMins] = useState(2)
 
   const pageTitle = "10 Minute time-tracker"
-  const secondsInTenMins = 2
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins) * 100)
@@ -29,7 +29,7 @@ const index = () => {
   const activityBtnHandler = (activityId) => {
     setModalShow(false)
     toggleTimer()
-    logActivity([...activityLog, activities[activityId]])
+    setActivityLog((activityLog) => [...activityLog, activities[activityId]])
   }
 
   // componentDidMount
