@@ -4,6 +4,10 @@ import { Container, Nav, Navbar } from "react-bootstrap"
 const pages = [
   { title: "Home", link: "/" },
   { title: "Scratch", link: "/scratch" },
+  {
+    title: "Dev thread",
+    link: "https://forum.level1techs.com/t/devember-2021-dopamine-detox-app/178926"
+  },
   { title: "GitHub", link: "https://github.com/robinedmunds/Dopamine-Detox" }
 ]
 
