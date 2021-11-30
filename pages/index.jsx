@@ -32,17 +32,14 @@ const index = () => {
     setActivityLog((activityLog) => [...activityLog, activities[activityId]])
   }
 
-  // componentDidMount
   useEffect(() => setActivities(mockAPI), [])
 
-  // timer logic
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
     let interval = null
 
     if (isTimerActive) {
       interval = setInterval(() => {
-        logger("timer useEffect")
         setSeconds((seconds) => seconds + 1)
         setProgressBarValue(calcProgressBarValue())
 
@@ -56,7 +53,6 @@ const index = () => {
     return () => clearInterval(interval)
   }, [isTimerActive, seconds])
 
-  // activityLog output to UI
   useEffect(() => {
     logger(activityLog)
   }, [activityLog])
