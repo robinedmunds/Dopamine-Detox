@@ -1,4 +1,4 @@
-import { Container, Button, Modal, Tabs, Tab } from "react-bootstrap"
+import { Container, Button, Modal, Tabs, Tab, Spinner } from "react-bootstrap"
 
 const TrackerModal = ({ show, activityBtnHandler, activities }) => {
   const generateBtn = (id, desc, isPositive) => (
@@ -33,27 +33,36 @@ const TrackerModal = ({ show, activityBtnHandler, activities }) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Tabs
-          defaultActiveKey="negatives"
-          id="uncontrolled-tab-example"
-          className="mb-3">
-          <Tab eventKey="negatives" title="negatives">
-            <Container
-              className={
-                "d-flex flex-column justify-content-center align-items-center"
-              }>
-              {generateBtns(false)}
-            </Container>
-          </Tab>
-          <Tab eventKey="positives" title="positives">
-            <Container
-              className={
-                "d-flex flex-column justify-content-center align-items-center"
-              }>
-              {generateBtns(true)}
-            </Container>
-          </Tab>
-        </Tabs>
+        {activities ? (
+          <Tabs
+            defaultActiveKey="negatives"
+            id="uncontrolled-tab-example"
+            className="mb-3">
+            <Tab eventKey="negatives" title="negatives">
+              <Container
+                className={
+                  "d-flex flex-column justify-content-center align-items-center"
+                }>
+                {generateBtns(false)}
+              </Container>
+            </Tab>
+            <Tab eventKey="positives" title="positives">
+              <Container
+                className={
+                  "d-flex flex-column justify-content-center align-items-center"
+                }>
+                {generateBtns(true)}
+              </Container>
+            </Tab>
+          </Tabs>
+        ) : (
+          <Container
+            className={
+              "d-flex flex-column justify-content-center align-items-center"
+            }>
+            <Spinner animation="border" variant="primary" />
+          </Container>
+        )}
       </Modal.Body>
     </Modal>
   )

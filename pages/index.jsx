@@ -11,9 +11,10 @@ const index = () => {
   const [progressBarValue, setProgressBarValue] = useState(0)
   const [isTimerActive, setIsTimerActive] = useState(false)
   const [showModal, setModalShow] = useState(false)
-  const [activities, setActivities] = useState(mockAPI)
+  const [activities, setActivities] = useState(null)
   const [activityLog, logActivity] = useState([])
 
+  const pageTitle = "10 Minute time-tracker"
   const secondsInTenMins = 2
 
   const calcProgressBarValue = () =>
@@ -36,6 +37,10 @@ const index = () => {
     }
   }
 
+  // componentDidMount
+  useEffect(() => setActivities(mockAPI), [])
+
+  // timer logic
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
     let interval = null
@@ -55,12 +60,10 @@ const index = () => {
     return () => clearInterval(interval)
   }, [isTimerActive, seconds])
 
+  // activityLog output to UI
   useEffect(() => {
     console.log(`activityLog:  ${activityLog}`)
   }, [activityLog])
-
-  const pageTitle = "10 Minute time-tracker"
-  const spacing = "mb-5"
 
   const renderStartStopBtn = () => {
     if (!isTimerActive) {
@@ -104,10 +107,10 @@ const index = () => {
       />
 
       <Layout>
-        <Container className={spacing}>
+        <Container className={"mb-5"}>
           <h1 className={"mb-3"}>{pageTitle}</h1>
           {renderStartStopBtn()}
-          <Container className={spacing}>
+          <Container className={"mb-5"}>
             <ProgressBar now={progressBarValue} />
             {/* <ProgressBar animated now={seconds} /> */}
           </Container>
