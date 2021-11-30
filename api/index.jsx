@@ -1,3 +1,5 @@
+import logger from "../helpers/logger"
+
 const generateObj = () => {
   const pos = [
     "exercising",
@@ -34,7 +36,8 @@ const generateObj = () => {
     ...negatives
   }
 
-  console.log(activities)
+  logger("mockAPI")
+  logger(activities)
   return activities
 }
 

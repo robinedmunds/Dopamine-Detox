@@ -5,6 +5,7 @@ import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
 import mockAPI from "../api/index"
+import logger from "../helpers/logger"
 
 const index = () => {
   const [seconds, setSeconds] = useState(0)
@@ -29,12 +30,6 @@ const index = () => {
     setModalShow(false)
     toggleTimer()
     logActivity([...activityLog, activities[activityId]])
-
-    const example = {
-      id: 0,
-      desc: "Read book",
-      positive: false
-    }
   }
 
   // componentDidMount
@@ -62,7 +57,7 @@ const index = () => {
 
   // activityLog output to UI
   useEffect(() => {
-    console.log(`activityLog:  ${activityLog}`)
+    logger(activityLog)
   }, [activityLog])
 
   const renderStartStopBtn = () =>
