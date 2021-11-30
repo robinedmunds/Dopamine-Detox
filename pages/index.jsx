@@ -16,6 +16,7 @@ const index = () => {
   const [activities, setActivities] = useState(null)
   const [activityLog, setActivityLog] = useState([])
   const secondsInTenMins = useRef(2)
+  const audibleBell = useRef(null)
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins.current) * 100)
@@ -44,7 +45,7 @@ const index = () => {
         setSeconds((seconds) => seconds + 1)
         setProgressBarValue(calcProgressBarValue())
         if (seconds >= secondsInTenMins.current) {
-          document.querySelector("audio").play()
+          audibleBell.current.play()
           toggleTimer()
           setModalShow(true)
         }
@@ -115,7 +116,8 @@ const index = () => {
           <LogTable activityLog={activityLog} />
         </Container>
       </Layout>
-      <audio preload="auto">
+
+      <audio ref={audibleBell} preload="auto">
         <source src="ring.ogg" type="audio/ogg" />
       </audio>
     </>
