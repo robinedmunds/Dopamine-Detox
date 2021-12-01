@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
+import useToggle from "../hooks/useToggle"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
@@ -11,8 +12,8 @@ import logger from "../helpers/logger"
 const index = () => {
   const [seconds, setSeconds] = useState(0)
   const [progressBarValue, setProgressBarValue] = useState(0)
-  const [isTimerActive, setIsTimerActive] = useState(false)
-  const [showModal, setModalShow] = useState(false)
+  const [isTimerActive, setIsTimerActive] = useToggle(false)
+  const [showModal, setModalShow] = useToggle(false)
   const [activities, setActivities] = useState(null)
   const [activityLog, setActivityLog] = useState([])
   const secondsInTenMins = useRef(2)
