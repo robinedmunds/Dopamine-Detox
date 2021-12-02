@@ -13,12 +13,13 @@ const index = () => {
   const [seconds, setSeconds] = useState(0)
   const [progressBarValue, setProgressBarValue] = useState(0)
   const [isTimerActive, setIsTimerActive] = useToggle(false)
-  const [showModal, setModalShow] = useToggle(false)
+  const [showModal, setShowModal] = useToggle(false)
   const [activities, setActivities] = useState(null)
   const [activityLog, setActivityLog] = useState([])
   const secondsInTenMins = useRef(2)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
+  const isBrowser = useRef(typeof window !== "undefined")
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins.current) * 100)
@@ -29,7 +30,7 @@ const index = () => {
   }
 
   const activityBtnHandler = (activityId) => {
-    setModalShow(false)
+    setShowModal(false)
     toggleTimer()
     setActivityLog((prevActivityLog) => [
       ...prevActivityLog,
@@ -41,7 +42,10 @@ const index = () => {
     ])
   }
 
-  useEffect(() => setActivities(mockAPI), [])
+  useEffect(() => {
+    logger(`isBrowser:  ${isBrowser.current}`)
+    setActivities(mockAPI)
+  }, [])
 
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
@@ -55,7 +59,7 @@ const index = () => {
         if (seconds >= secondsInTenMins.current) {
           audibleBell.current.play()
           toggleTimer()
-          setModalShow(true)
+          setShowModal(true)
           promptTime.current = new Date()
         }
       }, 1000)
@@ -64,6 +68,7 @@ const index = () => {
   }, [isTimerActive, seconds])
 
   useEffect(() => {
+    logger("activityLog (mem):-")
     logger(activityLog)
   }, [activityLog])
 
@@ -116,7 +121,7 @@ const index = () => {
           <Button
             className="invisible"
             variant="primary"
-            onClick={() => setModalShow(true)}>
+            onClick={() => setShowModal(true)}>
             Open user prompt modal
           </Button>
           <LogTable activityLog={activityLog} />
