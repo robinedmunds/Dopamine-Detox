@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
-import useToggle from "../hooks/useToggle"
+import { useToggle } from "react-use"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
