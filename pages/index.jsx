@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
-import { useToggle } from "react-use"
+import { useToggle, useLocalStorage } from "react-use"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
@@ -15,7 +15,10 @@ const index = () => {
   const [isTimerActive, setIsTimerActive] = useToggle(false)
   const [showModal, setShowModal] = useToggle(false)
   const [activities, setActivities] = useState(null)
-  const [activityLog, setActivityLog] = useState([])
+  const [activityLog, setActivityLog, removeActivityLog] = useLocalStorage(
+    "activityLog",
+    []
+  )
   const secondsInTenMins = useRef(2)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
@@ -32,8 +35,8 @@ const index = () => {
   const activityBtnHandler = (activityId) => {
     setShowModal(false)
     toggleTimer()
-    setActivityLog((prevActivityLog) => [
-      ...prevActivityLog,
+    setActivityLog([
+      ...activityLog,
       {
         ...activities[activityId],
         promptTime: promptTime.current,
@@ -68,7 +71,7 @@ const index = () => {
   }, [isTimerActive, seconds])
 
   useEffect(() => {
-    logger("activityLog (mem):-")
+    logger("activityLog (storage):-")
     logger(activityLog)
   }, [activityLog])
 
@@ -126,6 +129,13 @@ const index = () => {
           </Button>
           <LogTable activityLog={activityLog} />
         </Container>
+
+        <Button
+          className=""
+          variant="danger"
+          onClick={() => setActivityLog([])}>
+          resetActivityLog
+        </Button>
       </Layout>
 
       <audio ref={audibleBell} preload="auto">
