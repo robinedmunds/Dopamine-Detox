@@ -9,26 +9,33 @@ const SessionsTable = ({ sessions }) => {
     const stop = new Date(sessionStopTime)
     const durationMs = stop.getMilliseconds() - start.getMilliseconds()
     const durationMins = durationMs / 1000 / 60
+    const activitiesCount = activities.length
     let positiveCount = 0
     let negativeCount = 0
 
     activities.forEach((activity) => {
-      if (activity.positive) {
-        positiveCount++
-      } else {
-        negativeCount++
-      }
+      if (activity.positive) positiveCount++
+      if (!activity.positive) negativeCount++
     })
+    const positivePercentage = Math.round(
+      (positiveCount / activitiesCount) * 100
+    )
+
+    const bgColour = "bg-warning"
+    if (positivePercentage <= 40) bgColour = "bg-danger"
+    if (positivePercentage >= 60) bgColour = "bg-success"
 
     return (
-      <tr key={idx}>
+      <tr key={idx} className={bgColour}>
         <td>{idx + 1}</td>
         <td>{start.toLocaleString("en-GB")}</td>
         <td>{stop.toLocaleString("en-GB")}</td>
         <td>{durationMins}</td>
-        <td>{positiveCount}</td>
+        <td>
+          {positiveCount} / <strong>{positivePercentage}%</strong>
+        </td>
         <td>{negativeCount}</td>
-        <td>{activities.length}</td>
+        <td>{activitiesCount}</td>
       </tr>
     )
   }
