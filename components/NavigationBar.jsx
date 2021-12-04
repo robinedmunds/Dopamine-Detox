@@ -3,6 +3,7 @@ import { Container, Nav, Navbar } from "react-bootstrap"
 
 const pages = [
   { title: "Home", link: "/" },
+  { title: "Sessions", link: "/sessions" },
   { title: "Scratch", link: "/scratch" },
   {
     title: "Dev thread",
