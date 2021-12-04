@@ -36,7 +36,7 @@ const TrackerPage = () => {
     setSessionsStore([
       ...sessionsStore,
       {
-        sessionStart: sessionStartTime.current,
+        sessionStartTime: sessionStartTime.current,
         sessionStopTime: sessionStopTime.current,
         activities: activityLog
       }
