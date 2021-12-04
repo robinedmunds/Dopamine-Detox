@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useRouter } from "next/dist/client/router"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
 import { useToggle, useLocalStorage, useEffectOnce } from "react-use"
@@ -19,16 +20,44 @@ const TrackerPage = () => {
     "activityLog",
     []
   )
+  const [sessionsStore, setSessionsStore, removeSessionsStore] =
+    useLocalStorage("sessionsStore", [])
   const secondsInTenMins = useRef(2)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
+  const sessionStartTime = useRef(null)
+  const sessionStopTime = useRef(null)
+  const router = useRouter()
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins.current) * 100)
 
+  const saveLogToSessions = () => {
+    setSessionsStore([
+      ...sessionsStore,
+      {
+        sessionStart: sessionStartTime.current,
+        sessionStopTime: sessionStopTime.current,
+        activities: activityLog
+      }
+    ])
+    setActivityLog([])
+    router.push("/sessions")
+  }
+
   const toggleTimer = () => {
     setIsTimerActive(!isTimerActive)
     setSeconds(0)
+  }
+
+  const startStopBtnHandler = (startClicked) => {
+    if (startClicked) {
+      sessionStartTime.current = new Date()
+    } else {
+      sessionStopTime.current = new Date()
+      saveLogToSessions()
+    }
+    toggleTimer()
   }
 
   const activityBtnHandler = (activityId) => {
@@ -80,7 +109,7 @@ const TrackerPage = () => {
           variant="danger"
           size="lg"
           className={"my-5"}
-          onClick={() => toggleTimer()}>
+          onClick={() => startStopBtnHandler(false)}>
           Stop time tracker
         </Button>
       </Container>
@@ -91,7 +120,7 @@ const TrackerPage = () => {
           variant="success"
           size="lg"
           className={"my-5"}
-          onClick={() => toggleTimer()}>
+          onClick={() => startStopBtnHandler(true)}>
           Start time tracker
         </Button>
       </Container>
