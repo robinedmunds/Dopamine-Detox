@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
-import { useToggle, useLocalStorage } from "react-use"
+import { useToggle, useLocalStorage, useEffectOnce } from "react-use"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
@@ -9,7 +9,7 @@ import ProgressBar from "../components/tracker/ProgressBar"
 import mockAPI from "../api/index"
 import logger from "../helpers/logger"
 
-const index = () => {
+const TrackerPage = () => {
   const [seconds, setSeconds] = useState(0)
   const [progressBarValue, setProgressBarValue] = useState(0)
   const [isTimerActive, setIsTimerActive] = useToggle(false)
@@ -22,7 +22,6 @@ const index = () => {
   const secondsInTenMins = useRef(2)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
-  const isBrowser = useRef(typeof window !== "undefined")
 
   const calcProgressBarValue = () =>
     Math.ceil((seconds / secondsInTenMins.current) * 100)
@@ -45,35 +44,33 @@ const index = () => {
     ])
   }
 
-  useEffect(() => {
-    logger(`isBrowser:  ${isBrowser.current}`)
+  useEffectOnce(() => {
     setActivities(mockAPI)
   }, [])
+
+  useEffect(() => {}, [activityLog])
+
+  const tick = () => {
+    setSeconds((seconds) => seconds + 1)
+    setProgressBarValue(calcProgressBarValue())
+    if (seconds >= secondsInTenMins.current) {
+      audibleBell.current.play()
+      toggleTimer()
+      setShowModal(true)
+      promptTime.current = new Date()
+    }
+  }
 
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
     let interval = null
-
     if (isTimerActive) {
       interval = setInterval(() => {
-        setSeconds((seconds) => seconds + 1)
-        setProgressBarValue(calcProgressBarValue())
-
-        if (seconds >= secondsInTenMins.current) {
-          audibleBell.current.play()
-          toggleTimer()
-          setShowModal(true)
-          promptTime.current = new Date()
-        }
+        tick()
       }, 1000)
     }
     return () => clearInterval(interval)
   }, [isTimerActive, seconds])
-
-  useEffect(() => {
-    logger("activityLog (storage):-")
-    logger(activityLog)
-  }, [activityLog])
 
   const renderStartStopBtn = () =>
     isTimerActive ? (
@@ -145,4 +142,4 @@ const index = () => {
   )
 }
 
-export default index
+export default TrackerPage
