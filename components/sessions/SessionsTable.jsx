@@ -44,7 +44,7 @@ const SessionsTable = ({ sessions }) => {
     sessions.forEach((obj, idx) => {
       rows.push(generateRow(idx, obj))
     })
-    return rows
+    return rows.reverse()
   }
 
   return (
