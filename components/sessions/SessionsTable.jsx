@@ -32,10 +32,9 @@ const SessionsTable = ({ sessions }) => {
         <td>{stop.toLocaleString("en-GB")}</td>
         <td>{durationMins}</td>
         <td>
-          {positiveCount} / <strong>{positivePercentage}%</strong>
+          {positiveCount} / {negativeCount} / {activitiesCount}
         </td>
-        <td>{negativeCount}</td>
-        <td>{activitiesCount}</td>
+        <td className={"font-weight-bold"}>{positivePercentage}%</td>
       </tr>
     )
   }
@@ -57,9 +56,8 @@ const SessionsTable = ({ sessions }) => {
             <th>Start</th>
             <th>End</th>
             <th>Length (mins)</th>
-            <th>Positive</th>
-            <th>Negative</th>
-            <th>Total</th>
+            <th>P / N / T</th>
+            <th>Score</th>
           </tr>
         </thead>
         <tbody>{generateRows()}</tbody>
