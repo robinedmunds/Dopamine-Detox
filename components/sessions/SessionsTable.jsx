@@ -48,8 +48,6 @@ const SessionsTable = ({ sessions }) => {
     return rows
   }
 
-  const sessionsExist = sessions.length > 0
-
   return (
     <>
       <Table hover>
@@ -64,7 +62,7 @@ const SessionsTable = ({ sessions }) => {
             <th>Total</th>
           </tr>
         </thead>
-        {sessionsExist && <tbody>{generateRows()}</tbody>}
+        <tbody>{generateRows()}</tbody>
       </Table>
     </>
   )

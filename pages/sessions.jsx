@@ -10,6 +10,7 @@ const SessionsPage = () => {
     useLocalStorage("sessionsStore", [])
 
   const pageTitle = "Sessions page"
+  const sessionsExist = sessionsStore && sessionsStore.length > 0
   return (
     <>
       <Head>
@@ -19,7 +20,11 @@ const SessionsPage = () => {
       <Layout>
         <Container className={"mb-5"}>
           <h1 className={"mb-3"}>{pageTitle}</h1>
-          <SessionsTable sessions={sessionsStore} />
+          {sessionsExist ? (
+            <SessionsTable sessions={sessionsStore} />
+          ) : (
+            <h3 className={"text-center font-italic"}>no sessions</h3>
+          )}
         </Container>
       </Layout>
     </>
