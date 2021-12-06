@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/dist/client/router"
+import { useRouter } from "next/router"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
-import { useToggle, useLocalStorage, useEffectOnce } from "react-use"
+import { useToggle, useLocalStorage, useBeforeUnload } from "react-use"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
@@ -14,13 +14,15 @@ import logger from "../helpers/logger"
 const TrackerPage = ({ activityList }) => {
   const [seconds, setSeconds] = useState(0)
   const [progressBarValue, setProgressBarValue] = useState(0)
-  const [isTimerActive, setIsTimerActive] = useToggle(false)
-  const [showModal, setShowModal] = useToggle(false)
+  const [isTimerActive, toggleIsTimerActive] = useToggle(false)
+  const [showModal, toggleShowModal] = useToggle(false)
   const [activities, setActivities] = useState(activityList)
   const [activityLog, setActivityLog, removeActivityLog] = useLocalStorage(
     "activityLog",
     []
   )
+  const [dirty, toggleDirty] = useToggle(false)
+  useBeforeUnload(dirty, "The current session will be lost...")
   const [sessionsStore, setSessionsStore, removeSessionsStore] =
     useLocalStorage("sessionsStore", [])
   const secondsInTenMins = useRef(2)
@@ -47,7 +49,7 @@ const TrackerPage = ({ activityList }) => {
   }
 
   const toggleTimer = () => {
-    setIsTimerActive(!isTimerActive)
+    toggleIsTimerActive()
     setSeconds(0)
   }
 
@@ -62,7 +64,7 @@ const TrackerPage = ({ activityList }) => {
   }
 
   const activityBtnHandler = (activityId) => {
-    setShowModal(false)
+    toggleShowModal(false)
     toggleTimer()
     setActivityLog([
       ...activityLog,
@@ -74,6 +76,18 @@ const TrackerPage = ({ activityList }) => {
     ])
   }
 
+  const checkSaveState = () => {
+    if (isTimerActive || showModal) {
+      toggleDirty(true)
+    } else {
+      toggleDirty(false)
+    }
+  }
+
+  useEffect(() => {
+    checkSaveState()
+  }, [isTimerActive, showModal])
+
   useEffect(() => {}, [activityLog])
 
   const tick = () => {
@@ -82,7 +96,7 @@ const TrackerPage = ({ activityList }) => {
     if (seconds >= secondsInTenMins.current) {
       audibleBell.current.play()
       toggleTimer()
-      setShowModal(true)
+      toggleShowModal(true)
       promptTime.current = new Date()
     }
   }
@@ -147,7 +161,7 @@ const TrackerPage = ({ activityList }) => {
           <Button
             className="invisible"
             variant="primary"
-            onClick={() => setShowModal(true)}>
+            onClick={() => toggleShowModal(true)}>
             Open user prompt modal
           </Button>
           <LogTable activityLog={activityLog} />
