@@ -4,6 +4,7 @@ import Head from "next/head"
 import { Container } from "react-bootstrap"
 import { useLocalStorage } from "react-use"
 import Layout from "../../components/Layout"
+import SessionsTable from "../../components/sessions/SessionsTable"
 import LogTable from "../../components/tracker/LogTable"
 import logger from "../../helpers/logger"
 
@@ -26,6 +27,8 @@ const SessionPage = () => {
       <Layout>
         <Container className={"mb-5"}>
           <h1 className={"mb-3"}>{pageTitle}</h1>
+          <h2>Summary</h2>
+          {session && <SessionsTable sessions={[session]} />}
           {session && <LogTable activityLog={session.activities} />}
         </Container>
       </Layout>
