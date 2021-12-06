@@ -25,6 +25,8 @@ const TrackerModal = ({ show, activityBtnHandler, activities }) => {
   return (
     <Modal
       show={show}
+      backdrop="static"
+      keyboard={false}
       dialogClassName="modal-90w"
       aria-labelledby="example-custom-modal-styling-title">
       <Modal.Header>
