@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { Container, Nav, Navbar } from "react-bootstrap"
 
 const pages = [
@@ -13,17 +14,32 @@ const pages = [
 ]
 
 const NavigationBar = () => {
-  const NavItems = pages.map((o) => (
-    <Link key={o.title} href={o.link} passHref>
-      <Nav.Link href={o.link}>{o.title}</Nav.Link>
-    </Link>
-  ))
+  const router = useRouter()
+  const currentPath = router.pathname
+
+  const NavItems = pages.map((page) => {
+    const pathActive = currentPath === page.link
+
+    return (
+      <Link key={page.title} href={page.link} passHref>
+        {pathActive ? (
+          <Nav.Link href={page.link} active>
+            {page.title}
+          </Nav.Link>
+        ) : (
+          <Nav.Link href={page.link}>{page.title}</Nav.Link>
+        )}
+      </Link>
+    )
+  })
 
   return (
     <Navbar bg="primary" variant="dark" className={"mb-4"}>
       <Container>
-        <Navbar.Brand href="/">Dopamine detox app prototype</Navbar.Brand>
-        <Nav className="me-auto">{NavItems}</Nav>
+        <Link passHref href="/">
+          <Navbar.Brand>Dopamine detox app prototype</Navbar.Brand>
+        </Link>
+        <Nav className="justify-content-end">{NavItems}</Nav>
       </Container>
     </Navbar>
   )
