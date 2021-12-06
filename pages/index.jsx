@@ -11,12 +11,12 @@ import { activitiesTable } from "../api/mockAPI"
 import { activitiesTableReducer } from "../reducers/reducers"
 import logger from "../helpers/logger"
 
-const TrackerPage = () => {
+const TrackerPage = ({ activityList }) => {
   const [seconds, setSeconds] = useState(0)
   const [progressBarValue, setProgressBarValue] = useState(0)
   const [isTimerActive, setIsTimerActive] = useToggle(false)
   const [showModal, setShowModal] = useToggle(false)
-  const [activities, setActivities] = useState(null)
+  const [activities, setActivities] = useState(activityList)
   const [activityLog, setActivityLog, removeActivityLog] = useLocalStorage(
     "activityLog",
     []
@@ -73,11 +73,6 @@ const TrackerPage = () => {
       }
     ])
   }
-
-  useEffectOnce(() => {
-    const reduced = activitiesTableReducer(activitiesTable)
-    setActivities(reduced)
-  }, [])
 
   useEffect(() => {}, [activityLog])
 
@@ -173,4 +168,12 @@ const TrackerPage = () => {
   )
 }
 
+const getServerSideProps = async () => {
+  // pull data from 'API'. passes props to page
+  return {
+    props: { activityList: activitiesTableReducer(activitiesTable) }
+  }
+}
+
+export { getServerSideProps }
 export default TrackerPage
