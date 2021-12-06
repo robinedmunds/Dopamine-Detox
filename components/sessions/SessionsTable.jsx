@@ -27,8 +27,8 @@ const SessionsTable = ({ sessions }) => {
     if (positivePercentage >= 60) bgColour = "bg-success"
 
     return (
-      <Link href={`/session/${idx}`}>
-        <tr key={idx} className={bgColour + " pointer"}>
+      <Link key={idx} href={`/session/${idx}`}>
+        <tr className={bgColour + " pointer"}>
           <td>{idx + 1}</td>
           <td>{start.toLocaleString("en-GB")}</td>
           <td>{stop.toLocaleString("en-GB")}</td>
