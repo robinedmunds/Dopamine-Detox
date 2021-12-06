@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Table } from "react-bootstrap"
 
 const SessionsTable = ({ sessions }) => {
@@ -26,16 +27,18 @@ const SessionsTable = ({ sessions }) => {
     if (positivePercentage >= 60) bgColour = "bg-success"
 
     return (
-      <tr key={idx} className={bgColour}>
-        <td>{idx + 1}</td>
-        <td>{start.toLocaleString("en-GB")}</td>
-        <td>{stop.toLocaleString("en-GB")}</td>
-        <td>{durationMins}</td>
-        <td>
-          {positiveCount} / {negativeCount} / {activitiesCount}
-        </td>
-        <td className={"font-weight-bold"}>{positivePercentage}%</td>
-      </tr>
+      <Link href={`/session/${idx}`}>
+        <tr key={idx} className={bgColour + " pointer"}>
+          <td>{idx + 1}</td>
+          <td>{start.toLocaleString("en-GB")}</td>
+          <td>{stop.toLocaleString("en-GB")}</td>
+          <td>{durationMins}</td>
+          <td>
+            {positiveCount} / {negativeCount} / {activitiesCount}
+          </td>
+          <td className={"font-weight-bold"}>{positivePercentage}%</td>
+        </tr>
+      </Link>
     )
   }
 
