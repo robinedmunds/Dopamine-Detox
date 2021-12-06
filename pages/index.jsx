@@ -7,7 +7,8 @@ import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
 import ProgressBar from "../components/tracker/ProgressBar"
-import mockAPI from "../api/index"
+import { activitiesTable } from "../api/mockAPI"
+import { activitiesTableReducer } from "../reducers/reducers"
 import logger from "../helpers/logger"
 
 const TrackerPage = () => {
@@ -74,7 +75,8 @@ const TrackerPage = () => {
   }
 
   useEffectOnce(() => {
-    setActivities(mockAPI)
+    const reduced = activitiesTableReducer(activitiesTable)
+    setActivities(reduced)
   }, [])
 
   useEffect(() => {}, [activityLog])
