@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useReducer } from "react"
 import { useRouter } from "next/router"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
@@ -11,61 +11,100 @@ import { activitiesTable } from "../api/mockAPI"
 import { activitiesTableReducer } from "../reducers/reducers"
 import logger from "../helpers/logger"
 
+const ACTIONS = {
+  SET_START_TIME: "SET_START_TIME",
+  SET_STOP_TIME: "SET_STOP_TIME",
+  SET_TIMER_ACTIVE: "SET_TIMER_ACTIVE",
+  SET_TIMER_INACTIVE: "SET_TIMER_INACTIVE",
+  INCREMENT_SECONDS: "INCREMENT_SECONDS",
+  RESET_SECONDS: "RESET_SECONDS",
+  SHOW_MODAL: "SHOW_MODAL",
+  HIDE_MODAL: "HIDE_MODAL",
+  ADD_ACTIVITY: "ADD_ACTIVITY"
+}
+
 const TrackerPage = ({ activityList }) => {
-  const [seconds, setSeconds] = useState(0)
-  const [progressBarValue, setProgressBarValue] = useState(0)
-  const [isTimerActive, toggleIsTimerActive] = useToggle(false)
-  const [showModal, toggleShowModal] = useToggle(false)
+  const router = useRouter()
   const [activities, setActivities] = useState(activityList)
   const [activityLog, setActivityLog, removeActivityLog] = useLocalStorage(
     "activityLog",
     []
   )
-  const [dirty, toggleDirty] = useToggle(false)
-  useBeforeUnload(dirty, "The current session will be lost...")
   const [sessionsStore, setSessionsStore, removeSessionsStore] =
     useLocalStorage("sessionsStore", [])
-  const secondsInTenMins = useRef(2)
+  const [progressBarValue, setProgressBarValue] = useState(0)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
-  const sessionStartTime = useRef(null)
-  const sessionStopTime = useRef(null)
-  const router = useRouter()
+  const [dirty, toggleDirty] = useToggle(false)
+  useBeforeUnload(dirty, "The current session will be lost...")
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case ACTIONS.SET_TIMER_ACTIVE:
+        return { ...state, active: true }
+      case ACTIONS.SET_TIMER_INACTIVE:
+        return { ...state, active: false }
+      case ACTIONS.INCREMENT_SECONDS:
+        return { ...state, seconds: state.seconds + 1 }
+      case ACTIONS.RESET_SECONDS:
+        return { ...state, seconds: 0 }
+      case ACTIONS.SHOW_MODAL:
+        return { ...state, showModal: true }
+      case ACTIONS.HIDE_MODAL:
+        return { ...state, showModal: false }
+      case ACTIONS.ADD_ACTIVITY:
+        return { ...state, log: [...state.log, action.payload] }
+      case ACTIONS.SET_START_TIME:
+        return { ...state, startTime: new Date() }
+      case ACTIONS.SET_STOP_TIME:
+        return { ...state, stopTime: new Date() }
+      default:
+        return state
+    }
+  }
+  const [tracker, dispatch] = useReducer(reducer, {
+    intervalDuration: 3,
+    active: false,
+    intervalEvent: null,
+    startTime: null,
+    stopTime: null,
+    seconds: 0,
+    showModal: false,
+    log: [],
+    dirty: false
+  })
 
   const calcProgressBarValue = () =>
-    Math.ceil((seconds / secondsInTenMins.current) * 100)
+    Math.ceil((tracker.seconds / tracker.intervalDuration) * 100)
 
   const saveLogToSessions = () => {
     setSessionsStore([
       ...sessionsStore,
       {
-        sessionStartTime: sessionStartTime.current,
-        sessionStopTime: sessionStopTime.current,
+        sessionStartTime: tracker.startTime,
+        sessionStopTime: tracker.stopTime,
         activities: activityLog
       }
     ])
     setActivityLog([])
-    router.push("/sessions")
+    // router.push("/sessions")
   }
 
-  const toggleTimer = () => {
-    toggleIsTimerActive()
-    setSeconds(0)
-  }
-
-  const startStopBtnHandler = (startClicked) => {
+  const startStopBtnHandler = async (startClicked) => {
     if (startClicked) {
-      sessionStartTime.current = new Date()
+      dispatch({ type: ACTIONS.SET_START_TIME })
+      dispatch({ type: ACTIONS.SET_TIMER_ACTIVE })
     } else {
-      sessionStopTime.current = new Date()
+      dispatch({ type: ACTIONS.SET_STOP_TIME })
+      dispatch({ type: ACTIONS.SET_TIMER_INACTIVE })
+      // FIXME: execution order problem, tracker.stopTime is null after assignment
       saveLogToSessions()
     }
-    toggleTimer()
   }
 
   const activityBtnHandler = (activityId) => {
-    toggleShowModal(false)
-    toggleTimer()
+    dispatch({ type: ACTIONS.SET_TIMER_ACTIVE })
+    dispatch({ type: ACTIONS.HIDE_MODAL })
     setActivityLog([
       ...activityLog,
       {
@@ -77,7 +116,7 @@ const TrackerPage = ({ activityList }) => {
   }
 
   const checkSaveState = () => {
-    if (isTimerActive || showModal) {
+    if (tracker.active || tracker.showModal) {
       toggleDirty(true)
     } else {
       toggleDirty(false)
@@ -86,17 +125,18 @@ const TrackerPage = ({ activityList }) => {
 
   useEffect(() => {
     checkSaveState()
-  }, [isTimerActive, showModal])
+  }, [tracker.active, tracker.showModal])
 
   useEffect(() => {}, [activityLog])
 
   const tick = () => {
-    setSeconds((seconds) => seconds + 1)
+    dispatch({ type: ACTIONS.INCREMENT_SECONDS })
     setProgressBarValue(calcProgressBarValue())
-    if (seconds >= secondsInTenMins.current) {
+    if (tracker.seconds >= tracker.intervalDuration) {
       audibleBell.current.play()
-      toggleTimer()
-      toggleShowModal(true)
+      dispatch({ type: ACTIONS.SET_TIMER_INACTIVE })
+      dispatch({ type: ACTIONS.SHOW_MODAL })
+      dispatch({ type: ACTIONS.RESET_SECONDS })
       promptTime.current = new Date()
     }
   }
@@ -104,16 +144,16 @@ const TrackerPage = ({ activityList }) => {
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
     let interval = null
-    if (isTimerActive) {
+    if (tracker.active) {
       interval = setInterval(() => {
         tick()
       }, 1000)
     }
     return () => clearInterval(interval)
-  }, [isTimerActive, seconds])
+  }, [tracker.active, tracker.seconds])
 
   const renderStartStopBtn = () =>
-    isTimerActive ? (
+    tracker.active ? (
       <Container className={"d-flex justify-content-around"}>
         <Button
           id="start-stop-button"
@@ -145,7 +185,7 @@ const TrackerPage = ({ activityList }) => {
       </Head>
 
       <TrackerModal
-        show={showModal}
+        show={tracker.showModal}
         activityBtnHandler={activityBtnHandler}
         activities={activities}
       />
