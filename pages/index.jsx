@@ -98,6 +98,7 @@ const TrackerPage = ({ activityList }) => {
       dispatch({ type: ACTIONS.SET_STOP_TIME })
       dispatch({ type: ACTIONS.SET_TIMER_INACTIVE })
       // FIXME: execution order problem, tracker.stopTime is null after assignment
+      // saveLogToSessions func executes before new Data instantiation
       saveLogToSessions()
     }
   }
