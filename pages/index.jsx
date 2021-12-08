@@ -22,7 +22,8 @@ const ACTIONS = {
   HIDE_MODAL: "HIDE_MODAL",
   ADD_ACTIVITY: "ADD_ACTIVITY",
   START_CLICKED: "START_CLICKED",
-  STOP_CLICKED: "STOP_CLICKED"
+  STOP_CLICKED: "STOP_CLICKED",
+  ACTIVITY_CLICKED: "ACTIVITY_CLICKED"
 }
 
 const TrackerPage = ({ activityList }) => {
@@ -68,6 +69,10 @@ const TrackerPage = ({ activityList }) => {
         const setInactive = { active: false }
         const setStopTime = { stopTime: new Date() }
         return { ...state, ...setInactive, ...setStopTime }
+      case ACTIONS.ACTIVITY_CLICKED:
+        const setActive = { active: true }
+        const hideModal = { showModal: false }
+        return { ...state, ...setActive, ...hideModal }
       default:
         return state
     }
@@ -112,8 +117,7 @@ const TrackerPage = ({ activityList }) => {
   }
 
   const activityBtnHandler = (activityId) => {
-    dispatch({ type: ACTIONS.SET_TIMER_ACTIVE })
-    dispatch({ type: ACTIONS.HIDE_MODAL })
+    dispatch({ type: ACTIONS.ACTIVITY_CLICKED })
     setActivityLog([
       ...activityLog,
       {
