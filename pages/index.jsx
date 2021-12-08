@@ -19,12 +19,28 @@ const ACTIONS = {
   STOP_CLICKED: "STOP_CLICKED"
 }
 
+const initialState = {
+  trackerState: null,
+  intervalDuration: 3,
+  active: false,
+  intervalEvent: null,
+  startTime: null,
+  stopTime: null,
+  seconds: 0,
+  showModal: false,
+  activityLog: [],
+  dirty: false,
+  progressPercent: 0
+}
+
+const calcProgressPercent = (seconds, intervalDuration) =>
+  Math.ceil((seconds / intervalDuration) * 100)
+
 const TrackerPage = ({ activityList }) => {
   const router = useRouter()
   const [activities, setActivities] = useState(activityList)
   const [sessionsStore, setSessionsStore, removeSessionsStore] =
     useLocalStorage("sessionsStore", [])
-  const [progressPercent, setProgressPercent] = useState(0)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
 
@@ -39,7 +55,14 @@ const TrackerPage = ({ activityList }) => {
           startTime: new Date()
         }
       case ACTIONS.INCREMENT_SECONDS:
-        return { ...state, seconds: state.seconds + 1 }
+        return {
+          ...state,
+          seconds: state.seconds + 1,
+          progressPercent: calcProgressPercent(
+            state.seconds,
+            state.intervalDuration
+          )
+        }
       case ACTIONS.PROMPT_USER:
         return {
           ...state,
@@ -68,18 +91,7 @@ const TrackerPage = ({ activityList }) => {
         return state
     }
   }
-  const [tracker, dispatch] = useReducer(reducer, {
-    trackerState: null,
-    intervalDuration: 3,
-    active: false,
-    intervalEvent: null,
-    startTime: null,
-    stopTime: null,
-    seconds: 0,
-    showModal: false,
-    activityLog: [],
-    dirty: false
-  })
+  const [tracker, dispatch] = useReducer(reducer, initialState)
 
   // FIXME: worked for full DOM unload but not react nav
   useBeforeUnload(tracker.dirty, "The current session will be lost...")
@@ -102,12 +114,9 @@ const TrackerPage = ({ activityList }) => {
 
   useEffect(() => {}, [tracker])
 
-  const calcProgressPercent = () =>
-    Math.ceil((tracker.seconds / tracker.intervalDuration) * 100)
-
   const runEveryIntervalTick = () => {
     dispatch({ type: ACTIONS.INCREMENT_SECONDS })
-    setProgressPercent(calcProgressPercent())
+    // setProgressPercent(calcProgressPercent())
     if (tracker.seconds >= tracker.intervalDuration) {
       dispatch({ type: ACTIONS.PROMPT_USER })
       promptTime.current = new Date()
@@ -193,7 +202,7 @@ const TrackerPage = ({ activityList }) => {
           <h1 className={"mb-3"}>{pageTitle}</h1>
           {renderStartStopBtn()}
           <Container className={"mb-5"}>
-            <ProgressBar percentage={progressPercent} />
+            <ProgressBar percentage={tracker.progressPercent} />
           </Container>
 
           <LogTable activityLog={tracker.activityLog} />
