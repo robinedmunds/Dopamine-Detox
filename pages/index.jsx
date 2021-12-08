@@ -64,6 +64,10 @@ const TrackerPage = ({ activityList }) => {
         const setActive = { active: true }
         const setStartTime = { startTime: new Date() }
         return { ...state, ...setActive, ...setStartTime }
+      case ACTIONS.STOP_CLICKED:
+        const setInactive = { active: false }
+        const setStopTime = { stopTime: new Date() }
+        return { ...state, ...setInactive, ...setStopTime }
       default:
         return state
     }
@@ -100,8 +104,7 @@ const TrackerPage = ({ activityList }) => {
     if (startClicked) {
       dispatch({ type: ACTIONS.START_CLICKED })
     } else {
-      dispatch({ type: ACTIONS.SET_STOP_TIME })
-      dispatch({ type: ACTIONS.SET_TIMER_INACTIVE })
+      dispatch({ type: ACTIONS.STOP_CLICKED })
       // FIXME: execution order problem, tracker.stopTime is null after assignment
       // saveLogToSessions func executes before new Data instantiation
       saveLogToSessions()
