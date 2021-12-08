@@ -16,7 +16,6 @@ const ACTIONS = {
   INCREMENT_SECONDS: "INCREMENT_SECONDS",
   PROMPT_USER: "PROMPT_USER",
   ACTIVITY_CLICKED: "ACTIVITY_CLICKED",
-  ADD_ACTIVITY: "ADD_ACTIVITY",
   STOP_CLICKED: "STOP_CLICKED"
 }
 
@@ -39,10 +38,12 @@ const TrackerPage = ({ activityList }) => {
       case ACTIONS.PROMPT_USER:
         return { ...state, active: false, showModal: true, seconds: 0 }
       case ACTIONS.ACTIVITY_CLICKED:
-        return { ...state, active: true, showModal: false }
-      case ACTIONS.ADD_ACTIVITY:
-        // TODO: implement this
-        return { ...state, activityLog: [...state.activityLog, action.payload] }
+        return {
+          ...state,
+          active: true,
+          showModal: false,
+          activityLog: [...state.activityLog, action.payload]
+        }
       case ACTIONS.STOP_CLICKED:
         return { ...state, active: false, stopTime: new Date() }
       default:
@@ -94,9 +95,8 @@ const TrackerPage = ({ activityList }) => {
   }
 
   const activityBtnHandler = (activityId) => {
-    dispatch({ type: ACTIONS.ACTIVITY_CLICKED })
     dispatch({
-      type: ACTIONS.ADD_ACTIVITY,
+      type: ACTIONS.ACTIVITY_CLICKED,
       payload: {
         ...activities[activityId],
         promptTime: promptTime.current,
