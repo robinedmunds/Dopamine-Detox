@@ -24,7 +24,7 @@ const TrackerPage = ({ activityList }) => {
   const [activities, setActivities] = useState(activityList)
   const [sessionsStore, setSessionsStore, removeSessionsStore] =
     useLocalStorage("sessionsStore", [])
-  const [progressBarValue, setProgressBarValue] = useState(0)
+  const [progressPercent, setProgressPercent] = useState(0)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
 
@@ -84,9 +84,6 @@ const TrackerPage = ({ activityList }) => {
   // FIXME: worked for full DOM unload but not react nav
   useBeforeUnload(tracker.dirty, "The current session will be lost...")
 
-  const calcProgressBarValue = () =>
-    Math.ceil((tracker.seconds / tracker.intervalDuration) * 100)
-
   const startStopBtnHandler = (startClicked) => {
     if (startClicked) dispatch({ type: ACTIONS.START_CLICKED })
     if (!startClicked) dispatch({ type: ACTIONS.STOP_CLICKED })
@@ -103,26 +100,35 @@ const TrackerPage = ({ activityList }) => {
     })
   }
 
-  const tick = () => {
+  useEffect(() => {}, [tracker])
+
+  const calcProgressPercent = () =>
+    Math.ceil((tracker.seconds / tracker.intervalDuration) * 100)
+
+  const runEveryIntervalTick = () => {
     dispatch({ type: ACTIONS.INCREMENT_SECONDS })
-    setProgressBarValue(calcProgressBarValue())
+    setProgressPercent(calcProgressPercent())
     if (tracker.seconds >= tracker.intervalDuration) {
-      audibleBell.current.play()
       dispatch({ type: ACTIONS.PROMPT_USER })
       promptTime.current = new Date()
+      audibleBell.current.play()
     }
   }
-
-  useEffect(() => {}, [tracker])
 
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
     let interval = null
-    if (tracker.active) {
-      interval = setInterval(() => {
-        tick()
-      }, 1000)
+
+    const createOneSecondInterval = () => {
+      if (tracker.active) {
+        interval = setInterval(() => {
+          runEveryIntervalTick()
+        }, 1000)
+      }
+      return interval
     }
+
+    interval = createOneSecondInterval()
     return () => clearInterval(interval)
   }, [tracker.active, tracker.seconds])
 
@@ -187,7 +193,7 @@ const TrackerPage = ({ activityList }) => {
           <h1 className={"mb-3"}>{pageTitle}</h1>
           {renderStartStopBtn()}
           <Container className={"mb-5"}>
-            <ProgressBar percentage={progressBarValue} />
+            <ProgressBar percentage={progressPercent} />
           </Container>
 
           <LogTable activityLog={tracker.activityLog} />
