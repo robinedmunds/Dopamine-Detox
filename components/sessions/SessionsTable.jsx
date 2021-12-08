@@ -31,7 +31,6 @@ const SessionsTable = ({ sessions }) => {
         <tr className={bgColour + " pointer"}>
           <td>{idx + 1}</td>
           <td>{start.format("lll")}</td>
-          <td>{stop.format("lll")}</td>
           <td>{duration.humanize()}</td>
           <td>
             {positiveCount} / {negativeCount} / {activitiesCount}
@@ -57,8 +56,7 @@ const SessionsTable = ({ sessions }) => {
           <tr>
             <th>#</th>
             <th>Start</th>
-            <th>End</th>
-            <th>Length (mins)</th>
+            <th>Duration</th>
             <th>P / N / T</th>
             <th>Score</th>
           </tr>
