@@ -27,12 +27,11 @@ const TrackerPage = ({ activityList }) => {
   const [progressBarValue, setProgressBarValue] = useState(0)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
-  // useBeforeUnload(dirty, "The current session will be lost...")
 
   const reducer = (state, action) => {
     switch (action.type) {
       case ACTIONS.START_CLICKED:
-        return { ...state, active: true, startTime: new Date() }
+        return { ...state, dirty: true, active: true, startTime: new Date() }
       case ACTIONS.INCREMENT_SECONDS:
         return { ...state, seconds: state.seconds + 1 }
       case ACTIONS.PROMPT_USER:
@@ -45,7 +44,7 @@ const TrackerPage = ({ activityList }) => {
           activityLog: [...state.activityLog, action.payload]
         }
       case ACTIONS.STOP_CLICKED:
-        return { ...state, active: false, stopTime: new Date() }
+        return { ...state, dirty: false, active: false, stopTime: new Date() }
       default:
         return state
     }
@@ -62,14 +61,11 @@ const TrackerPage = ({ activityList }) => {
     dirty: false
   })
 
+  // FIXME: worked for full DOM unload but not react nav
+  useBeforeUnload(tracker.dirty, "The current session will be lost...")
+
   const calcProgressBarValue = () =>
     Math.ceil((tracker.seconds / tracker.intervalDuration) * 100)
-
-  const checkSaveState = () => {
-    if (tracker.active || tracker.showModal) {
-      // TODO: prevent navigation when timer active
-    }
-  }
 
   const saveLogToSessions = () => {
     setSessionsStore([
