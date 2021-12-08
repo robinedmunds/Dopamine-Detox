@@ -9,7 +9,7 @@ const SessionsTable = ({ sessions }) => {
   ) => {
     const start = moment(new Date(sessionStartTime))
     const stop = moment(new Date(sessionStopTime))
-    const duration = moment.duration(stop.diff(start)).humanize()
+    const duration = moment.duration(stop.diff(start))
     const activitiesCount = activities.length
     let positiveCount = 0
     let negativeCount = 0
@@ -30,9 +30,9 @@ const SessionsTable = ({ sessions }) => {
       <Link key={idx} href={`/session/${idx}`}>
         <tr className={bgColour + " pointer"}>
           <td>{idx + 1}</td>
-          <td>{start.toLocaleString("en-GB")}</td>
-          <td>{stop.toLocaleString("en-GB")}</td>
-          <td>{duration}</td>
+          <td>{start.format("lll")}</td>
+          <td>{stop.format("lll")}</td>
+          <td>{duration.humanize()}</td>
           <td>
             {positiveCount} / {negativeCount} / {activitiesCount}
           </td>
