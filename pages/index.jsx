@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useReducer } from "react"
 import { useRouter } from "next/router"
 import Head from "next/head"
-import { Container, Button } from "react-bootstrap"
-import { useLocalStorage, useBeforeUnload } from "react-use"
+import { Container, Button, ButtonGroup, ToggleButton } from "react-bootstrap"
+import { useLocalStorage, useBeforeUnload, useToggle } from "react-use"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
@@ -16,12 +16,14 @@ const ACTIONS = {
   INCREMENT_SECONDS: "INCREMENT_SECONDS",
   PROMPT_USER: "PROMPT_USER",
   ACTIVITY_CLICKED: "ACTIVITY_CLICKED",
-  STOP_CLICKED: "STOP_CLICKED"
+  STOP_CLICKED: "STOP_CLICKED",
+  DEV_MODE_ON: "DEV_MODE_ON",
+  DEV_MODE_OFF: "DEV_MODE_OFF"
 }
 
 const initialState = {
   trackerState: null,
-  intervalDuration: 3,
+  intervalDuration: 60 * 10,
   active: false,
   intervalEvent: null,
   startTime: null,
@@ -43,6 +45,7 @@ const TrackerPage = ({ activityList }) => {
     useLocalStorage("sessionsStore", [])
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
+  const [devMode, toggleDevMode] = useToggle(false)
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -87,6 +90,10 @@ const TrackerPage = ({ activityList }) => {
           active: false,
           stopTime: new Date()
         }
+      case ACTIONS.DEV_MODE_ON:
+        return { ...state, intervalDuration: 3 }
+      case ACTIONS.DEV_MODE_OFF:
+        return { ...state, intervalDuration: initialState.intervalDuration }
       default:
         return state
     }
@@ -159,6 +166,11 @@ const TrackerPage = ({ activityList }) => {
     addSessionToLocalStorage()
   }, [tracker.active])
 
+  useEffect(() => {
+    if (devMode) dispatch({ type: ACTIONS.DEV_MODE_ON })
+    if (!devMode) dispatch({ type: ACTIONS.DEV_MODE_OFF })
+  }, [devMode])
+
   const renderStartStopBtn = () =>
     tracker.active ? (
       <Container className={"d-flex justify-content-around"}>
@@ -184,19 +196,48 @@ const TrackerPage = ({ activityList }) => {
       </Container>
     )
 
+  const renderDevOpts = () => (
+    <Container>
+      <hr />
+      <h3>Dev options</h3>
+      <ButtonGroup>
+        <ToggleButton
+          id={"radio-off"}
+          type="radio"
+          variant={"outline-success"}
+          name="radio"
+          value={"radio-off"}
+          checked={devMode === false}
+          onChange={(e) => toggleDevMode(false)}>
+          Dev mode OFF
+        </ToggleButton>
+        <ToggleButton
+          id={"radio-on"}
+          type="radio"
+          variant={"outline-danger"}
+          name="radio"
+          value={"radio-on"}
+          checked={devMode === true}
+          onChange={(e) => toggleDevMode(true)}>
+          Dev mode ON
+        </ToggleButton>
+      </ButtonGroup>
+      <p>Dev mode sets the tracker interval duration to 3 seconds.</p>
+      <hr />
+    </Container>
+  )
+
   const pageTitle = "10 Minute time-tracker"
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
       </Head>
-
       <TrackerModal
         show={tracker.showModal}
         activityBtnHandler={activityBtnHandler}
         activities={activities}
       />
-
       <Layout>
         <Container className={"mb-5"}>
           <h1 className={"mb-3"}>{pageTitle}</h1>
@@ -207,8 +248,8 @@ const TrackerPage = ({ activityList }) => {
 
           <LogTable activityLog={tracker.activityLog} />
         </Container>
+        {renderDevOpts()}
       </Layout>
-
       <audio ref={audibleBell} preload="auto">
         <source src="ring.ogg" type="audio/ogg" />
       </audio>
