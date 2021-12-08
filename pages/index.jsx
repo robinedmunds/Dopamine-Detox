@@ -23,7 +23,8 @@ const ACTIONS = {
   ADD_ACTIVITY: "ADD_ACTIVITY",
   START_CLICKED: "START_CLICKED",
   STOP_CLICKED: "STOP_CLICKED",
-  ACTIVITY_CLICKED: "ACTIVITY_CLICKED"
+  ACTIVITY_CLICKED: "ACTIVITY_CLICKED",
+  PROMPT_USER: "PROMPT_USER"
 }
 
 const TrackerPage = ({ activityList }) => {
@@ -62,17 +63,13 @@ const TrackerPage = ({ activityList }) => {
       case ACTIONS.SET_STOP_TIME:
         return { ...state, stopTime: new Date() }
       case ACTIONS.START_CLICKED:
-        const setActive = { active: true }
-        const setStartTime = { startTime: new Date() }
-        return { ...state, ...setActive, ...setStartTime }
+        return { ...state, active: true, startTime: new Date() }
       case ACTIONS.STOP_CLICKED:
-        const setInactive = { active: false }
-        const setStopTime = { stopTime: new Date() }
-        return { ...state, ...setInactive, ...setStopTime }
+        return { ...state, active: false, stopTime: new Date() }
       case ACTIONS.ACTIVITY_CLICKED:
-        const setActive = { active: true }
-        const hideModal = { showModal: false }
-        return { ...state, ...setActive, ...hideModal }
+        return { ...state, active: true, showModal: false }
+      case ACTIONS.PROMPT_USER:
+        return { ...state, active: false, showModal: true, seconds: 0 }
       default:
         return state
     }
@@ -147,9 +144,7 @@ const TrackerPage = ({ activityList }) => {
     setProgressBarValue(calcProgressBarValue())
     if (tracker.seconds >= tracker.intervalDuration) {
       audibleBell.current.play()
-      dispatch({ type: ACTIONS.SET_TIMER_INACTIVE })
-      dispatch({ type: ACTIONS.SHOW_MODAL })
-      dispatch({ type: ACTIONS.RESET_SECONDS })
+      dispatch({ type: ACTIONS.PROMPT_USER })
       promptTime.current = new Date()
     }
   }
