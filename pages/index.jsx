@@ -23,17 +23,12 @@ const ACTIONS = {
 const TrackerPage = ({ activityList }) => {
   const router = useRouter()
   const [activities, setActivities] = useState(activityList)
-  const [activityLog, setActivityLog, removeActivityLog] = useLocalStorage(
-    "activityLog",
-    []
-  )
   const [sessionsStore, setSessionsStore, removeSessionsStore] =
     useLocalStorage("sessionsStore", [])
   const [progressBarValue, setProgressBarValue] = useState(0)
   const promptTime = useRef(null)
   const audibleBell = useRef(null)
-  const [dirty, toggleDirty] = useToggle(false)
-  useBeforeUnload(dirty, "The current session will be lost...")
+  // useBeforeUnload(dirty, "The current session will be lost...")
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -47,7 +42,7 @@ const TrackerPage = ({ activityList }) => {
         return { ...state, active: true, showModal: false }
       case ACTIONS.ADD_ACTIVITY:
         // TODO: implement this
-        return { ...state, log: [...state.log, action.payload] }
+        return { ...state, activityLog: [...state.activityLog, action.payload] }
       case ACTIONS.STOP_CLICKED:
         return { ...state, active: false, stopTime: new Date() }
       default:
@@ -62,12 +57,18 @@ const TrackerPage = ({ activityList }) => {
     stopTime: null,
     seconds: 0,
     showModal: false,
-    log: [],
+    activityLog: [],
     dirty: false
   })
 
   const calcProgressBarValue = () =>
     Math.ceil((tracker.seconds / tracker.intervalDuration) * 100)
+
+  const checkSaveState = () => {
+    if (tracker.active || tracker.showModal) {
+      // TODO: prevent navigation when timer active
+    }
+  }
 
   const saveLogToSessions = () => {
     setSessionsStore([
@@ -75,11 +76,10 @@ const TrackerPage = ({ activityList }) => {
       {
         sessionStartTime: tracker.startTime,
         sessionStopTime: tracker.stopTime,
-        activities: activityLog
+        activities: tracker.activityLog
       }
     ])
-    setActivityLog([])
-    // router.push("/sessions")
+    router.push("/sessions")
   }
 
   const startStopBtnHandler = async (startClicked) => {
@@ -95,29 +95,15 @@ const TrackerPage = ({ activityList }) => {
 
   const activityBtnHandler = (activityId) => {
     dispatch({ type: ACTIONS.ACTIVITY_CLICKED })
-    setActivityLog([
-      ...activityLog,
-      {
+    dispatch({
+      type: ACTIONS.ADD_ACTIVITY,
+      payload: {
         ...activities[activityId],
         promptTime: promptTime.current,
         reportTime: new Date()
       }
-    ])
+    })
   }
-
-  const checkSaveState = () => {
-    if (tracker.active || tracker.showModal) {
-      toggleDirty(true)
-    } else {
-      toggleDirty(false)
-    }
-  }
-
-  useEffect(() => {
-    checkSaveState()
-  }, [tracker.active, tracker.showModal])
-
-  useEffect(() => {}, [activityLog])
 
   const tick = () => {
     dispatch({ type: ACTIONS.INCREMENT_SECONDS })
@@ -128,6 +114,8 @@ const TrackerPage = ({ activityList }) => {
       promptTime.current = new Date()
     }
   }
+
+  useEffect(() => {}, [tracker])
 
   useEffect(() => {
     // https://upmostly.com/tutorials/build-a-react-timer-component-using-hooks
@@ -186,21 +174,8 @@ const TrackerPage = ({ activityList }) => {
             <ProgressBar percentage={progressBarValue} />
           </Container>
 
-          <Button
-            className="invisible"
-            variant="primary"
-            onClick={() => toggleShowModal(true)}>
-            Open user prompt modal
-          </Button>
-          <LogTable activityLog={activityLog} />
+          <LogTable activityLog={tracker.activityLog} />
         </Container>
-
-        <Button
-          className=""
-          variant="danger"
-          onClick={() => setActivityLog([])}>
-          resetActivityLog
-        </Button>
       </Layout>
 
       <audio ref={audibleBell} preload="auto">
