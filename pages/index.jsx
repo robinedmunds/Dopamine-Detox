@@ -20,7 +20,9 @@ const ACTIONS = {
   RESET_SECONDS: "RESET_SECONDS",
   SHOW_MODAL: "SHOW_MODAL",
   HIDE_MODAL: "HIDE_MODAL",
-  ADD_ACTIVITY: "ADD_ACTIVITY"
+  ADD_ACTIVITY: "ADD_ACTIVITY",
+  START_CLICKED: "START_CLICKED",
+  STOP_CLICKED: "STOP_CLICKED"
 }
 
 const TrackerPage = ({ activityList }) => {
@@ -58,6 +60,10 @@ const TrackerPage = ({ activityList }) => {
         return { ...state, startTime: new Date() }
       case ACTIONS.SET_STOP_TIME:
         return { ...state, stopTime: new Date() }
+      case ACTIONS.START_CLICKED:
+        const setActive = { active: true }
+        const setStartTime = { startTime: new Date() }
+        return { ...state, ...setActive, ...setStartTime }
       default:
         return state
     }
@@ -92,8 +98,7 @@ const TrackerPage = ({ activityList }) => {
 
   const startStopBtnHandler = async (startClicked) => {
     if (startClicked) {
-      dispatch({ type: ACTIONS.SET_START_TIME })
-      dispatch({ type: ACTIONS.SET_TIMER_ACTIVE })
+      dispatch({ type: ACTIONS.START_CLICKED })
     } else {
       dispatch({ type: ACTIONS.SET_STOP_TIME })
       dispatch({ type: ACTIONS.SET_TIMER_INACTIVE })
