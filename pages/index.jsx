@@ -12,19 +12,12 @@ import { activitiesTableReducer } from "../reducers/reducers"
 import logger from "../helpers/logger"
 
 const ACTIONS = {
-  SET_START_TIME: "SET_START_TIME",
-  SET_STOP_TIME: "SET_STOP_TIME",
-  SET_TIMER_ACTIVE: "SET_TIMER_ACTIVE",
-  SET_TIMER_INACTIVE: "SET_TIMER_INACTIVE",
-  INCREMENT_SECONDS: "INCREMENT_SECONDS",
-  RESET_SECONDS: "RESET_SECONDS",
-  SHOW_MODAL: "SHOW_MODAL",
-  HIDE_MODAL: "HIDE_MODAL",
-  ADD_ACTIVITY: "ADD_ACTIVITY",
   START_CLICKED: "START_CLICKED",
-  STOP_CLICKED: "STOP_CLICKED",
+  INCREMENT_SECONDS: "INCREMENT_SECONDS",
+  PROMPT_USER: "PROMPT_USER",
   ACTIVITY_CLICKED: "ACTIVITY_CLICKED",
-  PROMPT_USER: "PROMPT_USER"
+  ADD_ACTIVITY: "ADD_ACTIVITY",
+  STOP_CLICKED: "STOP_CLICKED"
 }
 
 const TrackerPage = ({ activityList }) => {
@@ -44,32 +37,19 @@ const TrackerPage = ({ activityList }) => {
 
   const reducer = (state, action) => {
     switch (action.type) {
-      case ACTIONS.SET_TIMER_ACTIVE:
-        return { ...state, active: true }
-      case ACTIONS.SET_TIMER_INACTIVE:
-        return { ...state, active: false }
-      case ACTIONS.INCREMENT_SECONDS:
-        return { ...state, seconds: state.seconds + 1 }
-      case ACTIONS.RESET_SECONDS:
-        return { ...state, seconds: 0 }
-      case ACTIONS.SHOW_MODAL:
-        return { ...state, showModal: true }
-      case ACTIONS.HIDE_MODAL:
-        return { ...state, showModal: false }
-      case ACTIONS.ADD_ACTIVITY:
-        return { ...state, log: [...state.log, action.payload] }
-      case ACTIONS.SET_START_TIME:
-        return { ...state, startTime: new Date() }
-      case ACTIONS.SET_STOP_TIME:
-        return { ...state, stopTime: new Date() }
       case ACTIONS.START_CLICKED:
         return { ...state, active: true, startTime: new Date() }
-      case ACTIONS.STOP_CLICKED:
-        return { ...state, active: false, stopTime: new Date() }
-      case ACTIONS.ACTIVITY_CLICKED:
-        return { ...state, active: true, showModal: false }
+      case ACTIONS.INCREMENT_SECONDS:
+        return { ...state, seconds: state.seconds + 1 }
       case ACTIONS.PROMPT_USER:
         return { ...state, active: false, showModal: true, seconds: 0 }
+      case ACTIONS.ACTIVITY_CLICKED:
+        return { ...state, active: true, showModal: false }
+      case ACTIONS.ADD_ACTIVITY:
+        // TODO: implement this
+        return { ...state, log: [...state.log, action.payload] }
+      case ACTIONS.STOP_CLICKED:
+        return { ...state, active: false, stopTime: new Date() }
       default:
         return state
     }
