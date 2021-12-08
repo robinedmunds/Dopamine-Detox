@@ -1,4 +1,5 @@
 import Link from "next/link"
+import moment from "moment"
 import { Table } from "react-bootstrap"
 
 const SessionsTable = ({ sessions }) => {
@@ -6,10 +7,9 @@ const SessionsTable = ({ sessions }) => {
     idx,
     { sessionStartTime, sessionStopTime, activities }
   ) => {
-    const start = new Date(sessionStartTime)
-    const stop = new Date(sessionStopTime)
-    const durationMs = stop.getMilliseconds() - start.getMilliseconds()
-    const durationMins = durationMs / 1000 / 60
+    const start = moment(new Date(sessionStartTime))
+    const stop = moment(new Date(sessionStopTime))
+    const duration = moment.duration(stop.diff(start)).humanize()
     const activitiesCount = activities.length
     let positiveCount = 0
     let negativeCount = 0
@@ -32,7 +32,7 @@ const SessionsTable = ({ sessions }) => {
           <td>{idx + 1}</td>
           <td>{start.toLocaleString("en-GB")}</td>
           <td>{stop.toLocaleString("en-GB")}</td>
-          <td>{durationMins}</td>
+          <td>{duration}</td>
           <td>
             {positiveCount} / {negativeCount} / {activitiesCount}
           </td>
