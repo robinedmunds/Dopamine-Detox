@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useReducer } from "react"
 import { useRouter } from "next/router"
 import Head from "next/head"
 import { Container, Button } from "react-bootstrap"
-import { useToggle, useLocalStorage, useBeforeUnload } from "react-use"
+import { useLocalStorage, useBeforeUnload } from "react-use"
 import Layout from "../components/Layout"
 import TrackerModal from "../components/tracker/Modal"
 import LogTable from "../components/tracker/LogTable"
@@ -31,25 +31,45 @@ const TrackerPage = ({ activityList }) => {
   const reducer = (state, action) => {
     switch (action.type) {
       case ACTIONS.START_CLICKED:
-        return { ...state, dirty: true, active: true, startTime: new Date() }
+        return {
+          ...state,
+          trackerState: ACTIONS.START_CLICKED,
+          dirty: true,
+          active: true,
+          startTime: new Date()
+        }
       case ACTIONS.INCREMENT_SECONDS:
         return { ...state, seconds: state.seconds + 1 }
       case ACTIONS.PROMPT_USER:
-        return { ...state, active: false, showModal: true, seconds: 0 }
+        return {
+          ...state,
+          trackerState: ACTIONS.PROMPT_USER,
+          active: false,
+          showModal: true,
+          seconds: 0
+        }
       case ACTIONS.ACTIVITY_CLICKED:
         return {
           ...state,
+          trackerState: ACTIONS.ACTIVITY_CLICKED,
           active: true,
           showModal: false,
           activityLog: [...state.activityLog, action.payload]
         }
       case ACTIONS.STOP_CLICKED:
-        return { ...state, dirty: false, active: false, stopTime: new Date() }
+        return {
+          ...state,
+          trackerState: ACTIONS.STOP_CLICKED,
+          dirty: false,
+          active: false,
+          stopTime: new Date()
+        }
       default:
         return state
     }
   }
   const [tracker, dispatch] = useReducer(reducer, {
+    trackerState: null,
     intervalDuration: 3,
     active: false,
     intervalEvent: null,
@@ -67,27 +87,9 @@ const TrackerPage = ({ activityList }) => {
   const calcProgressBarValue = () =>
     Math.ceil((tracker.seconds / tracker.intervalDuration) * 100)
 
-  const saveLogToSessions = () => {
-    setSessionsStore([
-      ...sessionsStore,
-      {
-        sessionStartTime: tracker.startTime,
-        sessionStopTime: tracker.stopTime,
-        activities: tracker.activityLog
-      }
-    ])
-    router.push("/sessions")
-  }
-
-  const startStopBtnHandler = async (startClicked) => {
-    if (startClicked) {
-      dispatch({ type: ACTIONS.START_CLICKED })
-    } else {
-      dispatch({ type: ACTIONS.STOP_CLICKED })
-      // FIXME: execution order problem, tracker.stopTime is null after assignment
-      // saveLogToSessions func executes before new Data instantiation
-      saveLogToSessions()
-    }
+  const startStopBtnHandler = (startClicked) => {
+    if (startClicked) dispatch({ type: ACTIONS.START_CLICKED })
+    if (!startClicked) dispatch({ type: ACTIONS.STOP_CLICKED })
   }
 
   const activityBtnHandler = (activityId) => {
@@ -123,6 +125,24 @@ const TrackerPage = ({ activityList }) => {
     }
     return () => clearInterval(interval)
   }, [tracker.active, tracker.seconds])
+
+  useEffect(() => {
+    const addSessionToLocalStorage = () => {
+      if (tracker.trackerState === ACTIONS.STOP_CLICKED) {
+        if (tracker.activityLog.length < 1) return
+        setSessionsStore([
+          ...sessionsStore,
+          {
+            sessionStartTime: tracker.startTime,
+            sessionStopTime: tracker.stopTime,
+            activities: tracker.activityLog
+          }
+        ])
+        router.push("/sessions")
+      }
+    }
+    addSessionToLocalStorage()
+  }, [tracker.active])
 
   const renderStartStopBtn = () =>
     tracker.active ? (
