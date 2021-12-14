@@ -5,13 +5,14 @@ services:
 
 before_install:
   - docker build -f Dockerfile.dev -t roblobob/dopamine-dev .
-  - docker run -d roblobob/dopamine-dev /bin/sh -c "cd /app; yarn build;"
+  - docker run -t roblobob/dopamine-dev /bin/sh -c "cd /app; yarn build;"
   - docker ps -a
-  - docker run -d roblobob/dopamine-dev /bin/sh -c "cd /app; yarn test;"
+  - docker run -t roblobob/dopamine-dev /bin/sh -c "cd /app; yarn test;"
 
 script:
   - docker build -t roblobob/dopamine-mvp .
 
 deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push roblobob/dopamine-mvp
+  - docker push roblobob/dopamine-mvp:latest
+  - docker push roblobob/dopamine-mvp:$TRAVIS_COMMIT
