@@ -5,9 +5,9 @@ services:
 
 before_install:
   - docker build -f Dockerfile.dev -t roblobob/dopamine-dev .
-  - docker run -d 127.0.0.1:3000:3000 roblobob/dopamine-dev /bin/sh -c "cd /app; yarn build;"
+  - docker run -d -p 127.0.0.1:3000:3000 roblobob/dopamine-dev /bin/sh -c "cd /app; yarn build;"
   - docker ps -a
-  - docker run -d 127.0.0.1:3000:3000 roblobob/dopamine-dev /bin/sh -c "cd /app; yarn test;"
+  - docker run -d -p 127.0.0.1:3000:3000 roblobob/dopamine-dev /bin/sh -c "cd /app; yarn test;"
 
 script:
   - docker build -t roblobob/dopamine-mvp .
