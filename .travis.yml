@@ -13,6 +13,7 @@ script:
   - docker build -t roblobob/dopamine-mvp .
 
 deploy:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push roblobob/dopamine-mvp:latest
-  - docker push roblobob/dopamine-mvp:$TRAVIS_COMMIT
+  provider: script
+  script: bash docker_push.sh
+  on:
+    branch: master
